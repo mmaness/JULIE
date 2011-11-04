@@ -7,6 +7,11 @@ most survey question types as well as specialized tools for the creation of stat
 choice experiments. JULIE is built on the popular Rails web application framework 
 and Ruby programming language.
 
+
+== Release Notes
+
+
+
 == Getting Started
 
 
