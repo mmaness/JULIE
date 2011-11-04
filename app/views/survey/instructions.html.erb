@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Survey Instructions - Travel Survey</title>
+		<meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
+		<link href="/stylesheets/lemonaid.css" rel="stylesheet" type="text/css"/>
+	</head>
+	<body>
+		
+		<div id="container">
+
+			<div id="navigation">
+				<ul>
+					<li><img src="/images/umd_logo.gif" alt="UMD" width="100%" /> </li>
+				</ul>
+			</div>
+
+			<div id="header">
+			  <h1><%= @name %></h1>
+			  <h2><%= @description %></h2>
+			</div>
+			
+			<div id="wrapper">
+			<div id="content">
+
+				<h1>Survey Instructions</h1>
+				
+				In this survey, you will be asked a series of questions of different types.  Most questions
+				will require some input from you.  Multiple choice questions will require you to click buttons 
+				like the ones below to make your choice:<br>
+				<br>
+				<%= radio_button_tag 'answer', "Choice 1" %>Choice #1<br>
+				<%= radio_button_tag 'answer', "Choice 2" %>Choice #2<br>
+				<%= radio_button_tag 'answer', "Choice 3" %>Choice #3<br>
+				<br>
+				There may also be questions that require you to use your keyboard to input information into
+				a text field like the one below:<br>
+				<br>
+				<%= text_field_tag("answer", "", {"size" => 30, "autocomplete" => "off"}) %>
+				<br>
+				<br>
+				You may modify your answer until you press the <%= submit_tag "  NEXT  >>  " %> button at the
+				bottom of the page.	Pressing the <%= submit_tag "  NEXT  >>  " %> button will submit your 
+				response and allow you to proceed to the next question.<br>
+				<br>
+				If you feel like you would like to go back to the previous question and change your response, 
+				<b>do not use your browser's back button</b>. Press the <%= submit_tag "  <<  BACK   " %> button
+				at the bottom of the page to do this.  If this option is not provided, then you can not change your
+				previous responses.<br>
+				<br>
+				If you feel uncomfortable answering a question, you may press the <%= submit_tag "  < SKIP >  " %>
+				button at the bottom of the page to skip the question.<br>
+				<hr><hr>
+				<br>			
+				<% form_tag( {:action => "question"} ) do %>
+					<%= highlight('Press NEXT to begin the survey...', 'NEXT') %><br>
+					<%= submit_tag "  NEXT  >>  " %>
+				<% end %>
+			
+			</div>
+			</div>
+			
+			<br>
+			<br>
+			<div id="footer">
+	
+				<span id="design-by">Created with Survey JULIE</span> 
+		  			Copyright &copy; Michael Maness 2007-2010.
+	
+			</div>
+
+		</div>
+	</body>
+</html>
+
+<!-- JULIE: Software for Conducting Travel Surveys and Other Surveys --> 
+<!-- Created by Michael Maness -->
+<!-- Copyright 2007 - 2010 -->

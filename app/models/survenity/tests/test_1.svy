@@ -1,0 +1,44 @@
+# Designed to test the choice experiments
+
+load 'test_2.svy'
+
+ChoiceExperiment SP_Game_1
+  attribute MPG
+    attribute_label "Fuel Economy<br>Miles per Gallon" #
+    attribute_label "Vehicle Size"
+    add_level 0, 25
+      "25 \"mpg\""
+    add_level 0, 30
+      '30 "mpg"'
+      #comment
+      '80 "mpg" (electric)'
+      
+  alternative 'Gasoline Vehicle' 
+    set_levels_for MPG <- [1 2 3 4]
+    set_levels_for MPG <- [1 2 3 4]
+    #Set levels for size
+    set_levels_for SIZE <- [4 6 8 10]
+  
+  alternative 'Hybrid Vehicle'
+    set_levels_for MPG <- [1 2 3 4]
+  alternative 'Electric Vehicle'
+    set_levels_for MPG <- [1 2 3 4]
+  alternative current_make_model
+    set_levels_for MPG <- [1 2 3 4]
+  
+  pre_table_text 'This is pre-table text...'
+  post_table_text 'This is post-table text...'
+  # Comment
+  post_table_text 'This is post-table text...'
+  post_table_text 'This is another line of text.'
+  
+  #This is a comment
+  add_design <- [1 2 3 4]
+  add_design <- [1 1 1 1]
+  add_design <- [1 2 2 2]
+  
+Scenario SP1_Q1
+  experiment SP_Game_1
+  experiment SP_Game_1
+
+EndSurvey

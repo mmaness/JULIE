@@ -1,0 +1,578 @@
+grammar SurvenityGrammar
+
+	########################################
+	# File Reading
+	########################################
+	
+	rule file
+		(blocks:(optional_space (question_type | choice_experiment | comment_line | load_statement))*
+		(optional_space end_survey (end_of_file))?) 
+		<SurveyFile> 
+	end
+	
+	rule comment_line
+		(comment? end_of_line)
+	end
+	
+	rule load_statement
+		("load" mandatory_space string optional_space comment? end_of_line) <LoadFile>
+	end
+	
+	rule end_survey
+		"EndSurvey" optional_space comment?
+		(end_of_line optional_space comment?)*
+	end
+
+	rule lines
+		((statement [\n])* (statement end_of_file))
+	end
+	
+	
+	########################################
+	# Question Creation
+	########################################
+	
+	rule question_type
+		survey_setup |
+		multiple_choice |
+		yes_no |
+		dummy |
+		true_false |
+		open_ended |
+		text_area |
+		integer_question |
+		decimal_question |
+		currency |
+		time_of_day |
+		scenario |
+		multiple_branch |
+		single_branch |
+		calculation_question
+	end
+	
+	rule multiple_questions
+		("MultipleQuestions" mandatory_space constant optional_space comment? end_of_line
+		(optional_sapce question_type)+
+		optional_space "end" optional_space comment? end_of_line) <MultipleQuestions>
+	end
+	
+	rule question_block_options
+		trait:(question_text |
+		add_default_answer |
+		calculation |
+		no_skip) <Trait>
+	end
+	
+	rule scenario_block_options
+		trait:(experiment |
+		pre_table_text |
+		post_table_text |
+		choice |
+		add_default_answer |
+		calculation |
+		no_skip) <Trait>
+	end
+	
+	rule question_block
+		(optional_space ((comment? end_of_line) | (trait:question_block_options comment? (end_of_line))))
+		<Trait>
+	end
+	
+	rule scenario_block
+		(optional_space ((comment? end_of_line) | (trait:scenario_block_options comment? (end_of_line))))
+		<Trait>
+	end
+	
+	rule multiple_choice_block
+		(optional_space ((comment? end_of_line) | (trait:(choice | question_block_options) comment? (end_of_line))))
+		<Trait>
+	end
+	
+	rule multiple_answer_block
+		(trait:multiple_choice_block) 
+		<Trait>
+	end
+	
+	rule number_input_block
+		(optional_space ((comment? end_of_line) | (trait:(bounds | question_block_options) comment? (end_of_line))))
+		<Trait>
+	end
+	
+	rule text_area_block
+		(optional_space ((comment? end_of_line) | (trait:(text_area_size | question_block_options) comment? (end_of_line))))
+		<Trait>
+	end
+	
+	rule setup_block
+		(optional_space ((comment? end_of_line) | (trait:( title:survey_name | survey_description | section ) comment? (end_of_line))))
+		<Trait>
+	end
+	
+	rule branch_block
+		(optional_space ((comment? end_of_line) | (trait:(branch | default_branch) comment? (end_of_line))))
+		<Trait>
+	end
+	
+	rule survey_setup
+		("SurveySettings" question_name optional_space comment? end_of_line
+		traits:(setup_block+)) <SurveySetup>
+	end
+	
+	rule multiple_choice
+		("MultipleChoice" question_name end_of_line
+		traits:(multiple_choice_block+)) <MultipleChoiceQuestion>
+	end
+	
+	rule multiple_answer
+		("MultipleAnswer" question_name end_of_line
+		traits:(multiple_answer_block+)) <MultipleAnswerQuestion>
+	end
+	
+	rule yes_no
+		("YesNo" question_name end_of_line
+		traits:(question_block+)) <YesNoQuestion>
+	end
+	
+	rule dummy
+		("Dummy" question_name end_of_line
+		traits:(question_block+)) <DummyQuestion>
+	end
+	
+	rule true_false
+		("TrueFalse" question_name end_of_line
+		traits:(question_block+)) <TrueFalseQuestion>
+	end
+	
+	rule open_ended
+		("OpenEnded" question_name end_of_line
+		traits:(question_block+)) <OpenEndedQuestion>
+	end
+	
+	rule text_area
+		("TextArea" question_name end_of_line
+		traits:(text_area_block+)) <TextAreaQuestion>
+	end
+	
+	rule integer_question
+		("Integer" question_name end_of_line
+		traits:(number_input_block+)) <IntegerQuestion>
+	end
+	
+	rule decimal_question
+		("Decimal" question_name end_of_line
+		traits:(number_input_block+)) <DecimalQuestion>
+	end
+	
+	rule currency
+		("Currency" question_name end_of_line
+		traits:(number_input_block+)) <CurrencyQuestion>
+	end
+	
+	rule time_of_day
+		("TimeOfDay" question_name end_of_line
+		traits:(number_input_block+)) <TimeOfDayQuestion>
+	end
+	
+	rule scenario
+		("Scenario" question_name end_of_line
+		traits:(scenario_block+)) <ScenarioQuestion>
+	end
+	
+	rule multiple_branch
+		("MultipleBranch" question_name end_of_line
+		optional_space reference end_of_line
+		traits:(branch_block+)) <MultipleBranch>
+	end
+	
+	rule single_branch
+		("SingleBranch" question_name end_of_line) <SingleBranch>
+ 	end
+	
+	rule calculation_question
+		("Calculation" question_name end_of_line
+		block:((statement | (optional_space comment?)) end_of_line)+) <CalculationQuestion>
+	end
+	
+	rule question_name
+		(mandatory_space constant optional_space comment?) <QuestionName>
+	end
+	
+	rule question_text
+		(("text" | "t") mandatory_space string) <QuestionText>
+	end
+	
+	rule pre_table_text
+		("pre_table_text" mandatory_space string) <PreTableText>
+	end
+	
+	rule post_table_text
+		("post_table_text" mandatory_space string) <PostTableText>
+	end
+	
+	rule calculation
+		("calculation" mandatory_space time:("before" | "after") optional_space end_of_line
+		block:((statement | (optional_space comment?)) end_of_line)*
+		optional_space "end" optional_space comment?) <Calculation>
+	end
+	
+	rule section
+		("section" mandatory_space string) <Section>
+	end
+	
+	rule survey_name
+		("survey_name" mandatory_space string) <SurveyName>
+	end
+	
+	rule survey_description
+		("survey_description" mandatory_space string) <SurveyDescription>
+	end
+	
+	rule bounds
+		("bounds" mandatory_space lower_bound:(number | variable | null_keyword) ("," optional_space upper_bound:(number | variable | null_keyword))?) <Bounds>
+	end
+	
+	rule add_default_answer
+		("add_default_answer" mandatory_space answer:(string | number | variable) ("," optional_space message:(string | variable))?) <AddDefaultAnswer>
+	end
+	
+	rule no_skip
+		("no_skip" optional_space) <NoSkip>
+	end
+	
+	rule choice
+		("choice" mandatory_space text:(string | number | variable) 
+		(',' optional_space representation:(number | variable))?) <Choice>
+	end
+	
+	rule text_area_size
+		("text_area_size" mandatory_space height:integer ("," optional_space width:integer)?) <TextAreaSize>
+	end
+	
+	rule reference
+		("reference" question_name) <Reference>
+	end
+	
+	rule branch
+		("branch" mandatory_space response:(string | variable | number) "," 
+		optional_space constant) <Branch>
+	end
+	
+	rule default_branch
+		("default_branch" mandatory_space constant) <DefaultBranch>
+	end
+	
+	rule experiment
+		("experiment" question_name) <ExperimentReference>
+	end
+	
+	
+	
+	########################################
+	# Choice Experiment Creation
+	########################################
+	
+	rule choice_experiment
+		(("ChoiceExperiment" mandatory_space constant optional_space comment?) end_of_line
+		traits:(experiment_block+)) <ChoiceExperiment>
+	end
+	
+	rule experiment_block
+		(optional_space ((comment? end_of_line) | (trait:(experiment_traits))))
+		<Trait>
+	end
+	
+	rule experiment_traits
+		trait:(pre_table_text |
+		post_table_text |
+		alternative |
+		choice |
+		attribute |
+		add_design) <Trait>
+	end
+	
+	rule attribute_label
+		optional_space ("attribute_label" mandatory_space label:(string | variable) optional_space comment? end_of_line) <AttributeLabel>
+	end
+	
+	rule attribute
+		("attribute" mandatory_space constant optional_space comment? end_of_line
+		(add_level | attribute_label)+) <AddAttribute>
+	end
+	
+	rule add_level
+		(optional_space ((comment? end_of_line) | 
+		level:("add_level" mandatory_space integer (comma | mandatory_space) level_value comment? end_of_line))
+		level_text+) <AddLevel>
+	end
+	
+	# Ways in which a level can be represented as a value
+	rule level_value
+		(val:(number | variable | constant | string) optional_space) <LevelValue>
+	end
+	
+	rule level_text
+		(optional_space ((comment? end_of_line) | (string optional_space comment? end_of_line))) <LevelText>
+	end
+	
+	rule alternative
+		("alternative" mandatory_space alt_name:(string | variable) optional_space comment? end_of_line
+		set_levels+) <Alternative>
+	end
+	
+	rule set_levels
+		(optional_space ((comment? end_of_line) |
+		("set_levels_for" mandatory_space attribute:constant optional_space array_insert levels:integer_array optional_space comment? end_of_line) )) <SetLevels> 
+	end
+	
+	rule add_design
+		(optional_space "add_design" optional_space array_insert integer_array optional_space comment? end_of_line) <AddDesign> 
+	end
+	
+	rule integer_array
+		( '[' optional_space integer (mandatory_space integer)* optional_space ']' optional_space ) <IntegerArray>
+	end
+	
+	########################################
+	# Assignment and Expression
+	########################################
+
+	rule statement
+		( optional_space executable:(assignment | expression) comment? ) <Statement> 
+	end
+	
+	rule assignment
+		( variable optional_space equal expression ) <Assignment>
+	end
+	
+	rule comment
+		('#' | '//') [^\n]*
+	end
+
+	rule expression
+		operation
+	end
+	
+	########################################
+	# Strings
+	########################################
+	
+	rule string
+		string:( double_quote_string | single_quote_string )
+	end
+	
+	rule double_quote_string
+		( '"' string:(([^"\\] | "\\" . )*) '"' ) <DoubleQuoteString>
+	end
+	
+	rule single_quote_string
+		( "'" string:((!"'" .)*) "'" ) <SingleQuoteString>
+	end
+	
+	########################################
+	# Arrays
+	########################################
+	
+	rule array
+		( ('[' optional_space ']') | ('[' optional_space array_entry (mandatory_space array_entry)* optional_space ']' optional_space) ) <ArrayLiteral>
+	end
+	
+	rule array_entry
+		number | string | variable | array
+	end
+	
+	########################################
+	# Arithmetic | Basic Math
+	########################################
+	
+	rule operation
+		sum
+	end
+	
+	rule sum
+		(product sum_tail)	
+	end
+	
+	rule sequential
+		(value seq_tail)
+	end
+	
+	rule seq_tail
+		(sequence value seq_tail) <Sequence> | ""
+	end
+	
+	rule exponential
+		(sequential exp_tail)
+	end
+	
+	rule exp_tail
+		(power sequential exp_tail) <Power> | ""
+	end
+	
+	rule product
+		(exponential product_tail)
+	end
+	
+	rule product_tail
+		multiplicand | divisior | ""
+	end
+	
+	rule multiplicand
+		(times exponential product_tail) <Multiplicand>
+	end
+	
+	rule divisior
+		(divide exponential product_tail) <Divisior> |
+		(integer_divide exponential product_tail) <IntegerDivisor> |
+		(mod exponential product_tail) <Modulo>
+	end
+	
+	rule sum_tail
+		addend | subtrahend | ""
+	end
+	
+	rule addend
+		(plus product sum_tail) <Addend>
+	end
+	
+	rule subtrahend
+		(minus product sum_tail) <Subtrahend>
+	end
+	
+	rule value
+		(open_paren expression close_paren <EndParenExpression>) <ParenExpression> | types
+	end
+	
+	rule equal
+		'=' optional_space
+	end
+	
+	rule plus
+		'+' optional_space
+	end
+	
+	rule minus
+		'-' optional_space
+	end
+	
+	rule times
+		'*' optional_space
+	end
+	
+	rule divide
+		'/' optional_space
+	end
+	
+	rule integer_divide
+		'//' optional_space
+	end
+	
+	rule mod
+		'%' optional_space
+	end
+	
+	rule power
+		'^' optional_space
+	end
+	
+	rule sequence
+		".." optional_space
+	end
+	
+	
+	########################################
+	# Language Literals
+	########################################
+	
+	rule types
+		(function | variable | number | array | string) optional_space
+	end
+	
+	# Change this implementation to not use the '*' multiplier
+	rule function
+		(variable open_paren (parameters | optional_space) close_paren) <Function> 
+	end
+	
+	rule parameters
+		((expression ',' optional_space parameters) | expression) <Parameters>
+	end
+	
+	rule number
+		decimal | integer
+	end
+	
+	rule integer
+		('-'? [0-9]+) <IntegerLiteral>
+	end
+	
+	rule decimal
+		('-'? [0-9]* '.' [0-9]+) <DecimalLiteral>
+	end
+	
+	rule open_paren
+		'(' optional_space
+	end
+	
+	rule close_paren
+		')' optional_space
+	end
+	
+	rule open_square_bracket
+		'[' optional_space
+	end
+	
+	rule close_square_bracket
+		']' optional_space
+	end
+	
+	rule variable
+		(!(keywords (mandatory_space | end_of_line)) 
+		identifier:([a-z] [a-zA-Z0-9_]*) array_index*) <Variable>
+	end
+	
+	rule array_index
+		( open_square_bracket optional_space index_value:(expression | variable) close_square_bracket <EndArrayIndex>) <ArrayIndex>
+	end
+	
+	rule constant
+		([A-Z] [a-zA-Z0-9_]*) <Constant>
+	end
+	
+	rule null_keyword
+		("null") <NullKeyword>
+	end
+	
+	rule keywords
+		('end' | 'if' | 'when' | 'else' | 'for' | 'each' | 'while' |
+		'goto' | 'class' | 'function' | 'method' | 'true' | 'false' |
+		'null' | 'do' | 'return' | 'except' | 'EndSurvey' | 'load')
+	end
+	
+	########################################
+	# Whitespace & Symbols
+	########################################
+	
+	rule comma
+		"," optional_space
+	end
+	
+	rule array_insert
+		'<-' optional_space
+	end
+	
+	rule optional_space
+		[ \t]*	
+	end
+	
+	rule mandatory_space
+		[ \t]+
+	end
+	
+	rule end_of_line
+		'\r'? [\n]
+	end
+	
+	rule end_of_file
+		!.
+	end
+	
+end

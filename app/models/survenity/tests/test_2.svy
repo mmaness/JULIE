@@ -1,0 +1,56 @@
+# Designed to test the texts
+
+SurveySettings Settings1 #Test Comment
+  survey_name "Test Survey 2"
+  survey_description "A survey to test some of functionality of Julia"
+  section "Section 1 of 1"
+  section "Oh yea a new line!"
+
+SingleBranch NumVehicles #New format
+#Woot the new format worked!
+
+MultipleChoice NumVehicles
+  text 'This is a text
+  with an extra line in the quote.... wooooo!'
+  # Comment
+  text 'This is the second line of the text'
+  
+  choice 'apple'
+  
+  choice 'banana'
+  
+MultipleChoice NumBikes
+  text "How many bikes do you own?"
+  #Here is the choice set...
+  
+  choice 0,1
+  choice 1,x
+  choice 2,y
+  choice 3,3
+  
+  calculation after
+    x = 2
+    #This is a statement in a calculation block
+    y = x + 1
+  end
+  
+Integer Age
+  text "How old are you?"
+  #bounds lower_bound[index[0]], upper_bound
+  bounds 2, 0
+  add_default_answer last_age
+  
+TextArea Reason
+  t "Why did you choose to do this survey?"
+  text_area_size 5
+  
+MultipleBranch Link2
+  reference NumBikes
+  branch 2, Age
+  branch 0, Reason
+  default_branch NumVehicles
+
+Dummy Test
+  t "test"
+  
+EndSurvey

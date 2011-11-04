@@ -1,0 +1,9 @@
+Calculation Calc_1
+    x = [1 2 3]
+    y = 10
+    t = 0
+    z = x[t+1] * y
+    w = (x[0]) - (2) + 3
+    w+y
+
+EndSurvey

@@ -1,0 +1,564 @@
+grammar Survenity
+
+	########################################
+	# File Reading
+	########################################
+	
+	rule file
+		((optional_space (question_type / choice_experiment / comment_line / load_statement))*
+		(optional_space end_survey (end_of_file))?) 
+		 
+	end
+	
+	rule comment_line
+		(comment? end_of_line)
+	end
+	
+	rule load_statement
+		("load" mandatory_space string optional_space comment? end_of_line) 
+	end
+	
+	rule end_survey
+		"EndSurvey" optional_space comment?
+		(end_of_line optional_space comment?)*
+	end
+
+	rule lines
+		((statement [\n])* (statement end_of_file))
+	end
+	
+	
+	########################################
+	# Question Creation
+	########################################
+	
+	rule question_type
+		survey_setup /
+		multiple_choice /
+		yes_no /
+		dummy /
+		true_false /
+		open_ended /
+		text_area /
+		integer_question /
+		decimal_question /
+		currency /
+		time_of_day /
+		scenario /
+		multiple_branch /
+		single_branch /
+		calculation_question
+	end
+	
+	rule multiple_questions
+		("MultipleQuestions" mandatory_space constant optional_space comment? end_of_line
+		(optional_sapce question_type)+
+		optional_space "end" optional_space comment? end_of_line) 
+	end
+	
+	rule question_block_options
+		question_text /
+		add_default_answer /
+		calculation /
+		no_skip
+	end
+	
+	rule scenario_block_options
+		(experiment / pre_table_text / post_table_text / choice / add_default_answer / calculation / no_skip) 
+	end
+	
+	rule question_block
+		(optional_space ((comment? end_of_line) / (question_block_options comment? (end_of_line))))
+		
+	end
+	
+	rule scenario_block
+		(optional_space ((comment? end_of_line) / (scenario_block_options comment? (end_of_line))))
+		
+	end
+	
+	rule multiple_choice_block
+		(optional_space ((comment? end_of_line) / ((choice / question_block_options) comment? (end_of_line))))
+		
+	end
+	
+	rule multiple_answer_block
+		(multiple_choice_block) 
+		
+	end
+	
+	rule number_input_block
+		(optional_space ((comment? end_of_line) / ((bounds / question_block_options) comment? (end_of_line))))
+		
+	end
+	
+	rule text_area_block
+		(optional_space ((comment? end_of_line) / ((text_area_size / question_block_options) comment? (end_of_line))))
+		
+	end
+	
+	rule setup_block
+		(optional_space ((comment? end_of_line) / (( survey_name / survey_description / section ) comment? (end_of_line))))
+		
+	end
+	
+	rule branch_block
+		(optional_space ((comment? end_of_line) / ((branch / default_branch) comment? (end_of_line))))
+		
+	end
+	
+	rule survey_setup
+		("SurveySettings" question_name optional_space comment? end_of_line
+		(setup_block+)) 
+	end
+	
+	rule multiple_choice
+		("MultipleChoice" question_name end_of_line
+		(multiple_choice_block+)) 
+	end
+	
+	rule multiple_answer
+		("MultipleAnswer" question_name end_of_line
+		(multiple_answer_block+)) 
+	end
+	
+	rule yes_no
+		("YesNo" question_name end_of_line
+		(question_block+)) 
+	end
+	
+	rule dummy
+		("Dummy" question_name end_of_line
+		(question_block+)) 
+	end
+	
+	rule true_false
+		("TrueFalse" question_name end_of_line
+		(question_block+)) 
+	end
+	
+	rule open_ended
+		("OpenEnded" question_name end_of_line
+		(question_block+)) 
+	end
+	
+	rule text_area
+		("TextArea" question_name end_of_line
+		(text_area_block+)) 
+	end
+	
+	rule integer_question
+		("Integer" question_name end_of_line
+		(number_input_block+)) 
+	end
+	
+	rule decimal_question
+		("Decimal" question_name end_of_line
+		(number_input_block+)) 
+	end
+	
+	rule currency
+		("Currency" question_name end_of_line
+		(number_input_block+)) 
+	end
+	
+	rule time_of_day
+		("TimeOfDay" question_name end_of_line
+		(number_input_block+)) 
+	end
+	
+	rule scenario
+		("Scenario" question_name end_of_line
+		(scenario_block+)) 
+	end
+	
+	rule multiple_branch
+		("MultipleBranch" question_name end_of_line
+		optional_space reference end_of_line
+		(branch_block+)) 
+	end
+	
+	rule single_branch
+		("SingleBranch" question_name end_of_line) 
+ 	end
+	
+	rule calculation_question
+		("Calculation" question_name end_of_line
+		((statement / (optional_space comment?)) end_of_line)+) 
+	end
+	
+	rule question_name
+		(mandatory_space constant optional_space comment?) 
+	end
+	
+	rule question_text
+		(("text" / "t") mandatory_space string) 
+	end
+	
+	rule pre_table_text
+		("pre_table_text" mandatory_space string) 
+	end
+	
+	rule post_table_text
+		("post_table_text" mandatory_space string) 
+	end
+	
+	rule calculation
+		("calculation" mandatory_space ("before" / "after") optional_space end_of_line
+		((statement / (optional_space comment?)) end_of_line)*
+		optional_space "end" optional_space comment?) 
+	end
+	
+	rule section
+		("section" mandatory_space string) 
+	end
+	
+	rule survey_name
+		("survey_name" mandatory_space string) 
+	end
+	
+	rule survey_description
+		("survey_description" mandatory_space string) 
+	end
+	
+	rule bounds
+		("bounds" mandatory_space (number / variable / null_keyword) ("," optional_space (number / variable / null_keyword))?) 
+	end
+	
+	rule add_default_answer
+		("add_default_answer" mandatory_space (string / number / variable) ("," optional_space (string / variable))?) 
+	end
+	
+	rule no_skip
+		("no_skip" optional_space) 
+	end
+	
+	rule choice
+		("choice" mandatory_space (string / number / variable) 
+		(',' optional_space (number / variable))?) 
+	end
+	
+	rule text_area_size
+		("text_area_size" mandatory_space integer ("," optional_space integer)?) 
+	end
+	
+	rule reference
+		("reference" question_name) 
+	end
+	
+	rule branch
+		("branch" mandatory_space (string / variable / number) "," 
+		optional_space constant) 
+	end
+	
+	rule default_branch
+		("default_branch" mandatory_space constant) 
+	end
+	
+	rule experiment
+		("experiment" question_name) 
+	end
+	
+	
+	
+	########################################
+	# Choice Experiment Creation
+	########################################
+	
+	rule choice_experiment
+		(("ChoiceExperiment" mandatory_space constant optional_space comment?) end_of_line
+		(experiment_block+)) 
+	end
+	
+	rule experiment_block
+		(optional_space ((comment? end_of_line) / ((experiment_traits))))
+		
+	end
+	
+	rule experiment_traits
+		(pre_table_text /
+		post_table_text /
+		alternative /
+		choice /
+		attribute /
+		add_design) 
+	end
+	
+	rule attribute_label
+		optional_space ("attribute_label" mandatory_space (string / variable) optional_space comment? end_of_line) 
+	end
+	
+	rule attribute
+		("attribute" mandatory_space constant optional_space comment? end_of_line
+		(add_level / attribute_label)+) 
+	end
+	
+	rule add_level
+		(optional_space ((comment? end_of_line) / 
+		("add_level" mandatory_space integer (comma / mandatory_space) level_value comment? end_of_line))
+		level_text+) 
+	end
+	
+	# Ways in which a level can be represented as a value
+	rule level_value
+		((number / variable / constant / string) optional_space) 
+	end
+	
+	rule level_text
+		(optional_space ((comment? end_of_line) / (string optional_space comment? end_of_line))) 
+	end
+	
+	rule alternative
+		("alternative" mandatory_space (string / variable) optional_space comment? end_of_line
+		set_levels+) 
+	end
+	
+	rule set_levels
+		(optional_space ((comment? end_of_line) /
+		("set_levels_for" mandatory_space constant optional_space array_insert integer_array optional_space comment? end_of_line) ))  
+	end
+	
+	rule add_design
+		(optional_space "add_design" optional_space array_insert integer_array optional_space comment? end_of_line)  
+	end
+	
+	rule integer_array
+		( '[' optional_space integer (mandatory_space integer)* optional_space ']' optional_space ) 
+	end
+	
+	########################################
+	# Assignment and Expression
+	########################################
+
+	rule statement
+		( optional_space (assignment / expression) comment? )  
+	end
+	
+	rule assignment
+		( variable optional_space equal expression ) 
+	end
+	
+	rule comment
+		('#' / '//') [^\n]*
+	end
+
+	rule expression
+		operation
+	end
+	
+	########################################
+	# Strings
+	########################################
+	
+	rule string
+		( double_quote_string / single_quote_string )
+	end
+	
+	rule double_quote_string
+		( '"' (([^"\\] / "\\" . )*) '"' ) 
+	end
+	
+	rule single_quote_string
+		( "'" ((!"'" .)*) "'" ) 
+	end
+	
+	########################################
+	# Arrays
+	########################################
+	
+	rule array
+		( '[' optional_space array_entry (mandatory_space array_entry)* optional_space ']' optional_space ) 
+	end
+	
+	rule array_entry
+		number / string / variable / array
+	end
+	
+	########################################
+	# Arithmetic / Basic Math
+	########################################
+	
+	rule operation
+		sum
+	end
+	
+	rule sum
+		(product sum_tail)	
+	end
+	
+	rule sequential
+		(value seq_tail)
+	end
+	
+	rule seq_tail
+		(sequence value seq_tail)  / ""
+	end
+	
+	rule exponential
+		(sequential exp_tail)
+	end
+	
+	rule exp_tail
+		(power sequential exp_tail)  / ""
+	end
+	
+	rule product
+		(exponential product_tail)
+	end
+	
+	rule product_tail
+		multiplicand / divisior / ""
+	end
+	
+	rule multiplicand
+		(times exponential product_tail) 
+	end
+	
+	rule divisior
+		(divide exponential product_tail)  /
+		(integer_divide exponential product_tail)  /
+		(mod exponential product_tail) 
+	end
+	
+	rule sum_tail
+		addend / subtrahend / ""
+	end
+	
+	rule addend
+		(plus product sum_tail) 
+	end
+	
+	rule subtrahend
+		(minus product sum_tail) 
+	end
+	
+	rule value
+		(open_paren expression close_paren)  / types
+	end
+	
+	rule equal
+		'=' optional_space
+	end
+	
+	rule plus
+		'+' optional_space
+	end
+	
+	rule minus
+		'-' optional_space
+	end
+	
+	rule times
+		'*' optional_space
+	end
+	
+	rule divide
+		'/' optional_space
+	end
+	
+	rule integer_divide
+		'//' optional_space
+	end
+	
+	rule mod
+		'%' optional_space
+	end
+	
+	rule power
+		'^' optional_space
+	end
+	
+	rule sequence
+		".." optional_space
+	end
+	
+	
+	########################################
+	# Language Literals
+	########################################
+	
+	rule types
+		(function / variable / number / array / string) optional_space
+	end
+	
+	# Change this implementation to not use the '*' multiplier
+	rule function
+		(variable open_paren (parameters / optional_space) close_paren)  
+	end
+	
+	rule parameters
+		((expression ',' optional_space parameters) / expression) 
+	end
+	
+	rule number
+		decimal / integer
+	end
+	
+	rule integer
+		('-'? [0-9]+) 
+	end
+	
+	rule decimal
+		('-'? [0-9]* '.' [0-9]+) 
+	end
+	
+	rule open_paren
+		'(' optional_space
+	end
+	
+	rule close_paren
+		')' optional_space
+	end
+	
+	rule variable
+		(!(keywords (mandatory_space / end_of_line)) 
+		([a-z] [a-zA-Z0-9_]*) array_index*) 
+	end
+	
+	rule array_index
+		("[" optional_space (value / variable) "]") 
+	end
+	
+	rule constant
+		([A-Z] [a-zA-Z0-9_]*) 
+	end
+	
+	rule null_keyword
+		("null") 
+	end
+	
+	rule keywords
+		('end' / 'if' / 'when' / 'else' / 'for' / 'each' / 'while' /
+		'goto' / 'class' / 'function' / 'method' / 'true' / 'false' /
+		'null' / 'do' / 'return' / 'except' / 'EndSurvey' / 'load')
+	end
+	
+	########################################
+	# Whitespace & Other Symbols
+	########################################
+	
+	rule comma
+		"," optional_space
+	end
+	
+	rule array_insert
+		'<-' optional_space
+	end
+	
+	rule optional_space
+		[ \t]*	
+	end
+	
+	rule mandatory_space
+		[ \t]+
+	end
+	
+	rule end_of_line
+		'\r'? [\n]
+	end
+	
+	rule end_of_file
+		!.
+	end
+	
+end

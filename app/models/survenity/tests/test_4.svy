@@ -1,0 +1,28 @@
+ChoiceExperiment SP_Test
+  attribute MPG
+    attribute_label "Fuel Economy<br>Miles per Gallon" #
+    add_level 0, 20
+      "20 \"mpg\""
+    add_level 1, 30
+      '30 "mpg"'
+    add_level 2, 40
+      '40 "mpg"'
+      
+  alternative 'Gasoline Vehicle' 
+    set_levels_for MPG <- [0 1 2]
+  
+  pre_table_text 'This is pre-table text...'
+  post_table_text 'This is post-table text...'
+  
+  add_design <- [1]
+  add_design <- [2]
+  add_design <- [3]
+  add_design <- [1]
+  add_design <- [1]
+  add_design <- [1]
+  add_design <- [1]
+  
+  choice "I will keep my current vehicle"
+  choice "I will purchase the gasoline vehicle"
+  
+EndSurvey

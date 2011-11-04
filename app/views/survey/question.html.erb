@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Question <%= @count %> - Travel Survey</title>
+		<meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
+		<link href="/stylesheets/lemonaid.css" rel="stylesheet" type="text/css"/>
+	</head>
+	<body>
+		
+		<div id="container">
+
+			<div id="navigation">
+				<ul>
+					<li><img src="/images/umd_logo.gif" alt="UMD" width="100%" /> </li>
+				</ul>
+			</div>
+
+			<div id="header">
+			  <h1><%= @name %></h1>
+			  <h2><%= @description %></h2>
+			</div>
+			
+			<div id="wrapper">
+			<div id="content">
+
+			<% if @dummy != true %>
+				<% if @section != nil %>
+					<h1><%= @section %></h1>
+				<% end %>
+				<h2>Question <%= @count %>.</h2>
+							
+				<% form_tag( {:action => "check"} ) do %>
+					
+					<% if flash[:notice] != nil %>
+						<div style="color: red" class="notice">Sorry, your answer was not valid:<br>
+						<%= flash[:notice] %></div>
+						<br>
+					<% end %>
+				
+					<%= @question %>
+					<br>
+					
+					<% if @choices == nil %>
+						<% if @questionObject.class == TimeOfDayQuestion %>
+							<%= select_tag "hour", options_for_select(@Hours) %>&nbsp;:
+							<%= select_tag "minute", options_for_select(@Minutes) %>&nbsp;&nbsp;
+							<%= select_tag "period", options_for_select(["AM","PM"])%>
+							<% if @questionObject.default_answer != nil %>
+								<br>
+								<%= check_box_tag 'default', @questionObject.default_answer %>
+								I do not know
+							<% end %>
+						<% else %>
+							<%= text_field_tag("answer", "", {"size" => 30, "autocomplete" => "off"}) %>
+							<% if @questionObject.default_answer != nil %>
+								<br>
+								<%= check_box_tag 'answer', @questionObject.default_answer %>
+								I do not know
+							<% end %>
+						<% end %>
+					<% else %>
+						<% if @questionObject.multipleAnswer? %>
+							<% for index in 0..(@choices.size-1) %>
+								<%= check_box_tag 'answer', @values[index] %>
+								<%= @choices[index]%> <br>
+							<% end %>
+						<% else %>
+							<% for index in 0..(@choices.size-1) %>
+								<%= radio_button_tag 'answer', @values[index] %>
+								<%= @choices[index]%> <br>
+							<% end %>
+							<% if @questionObject.default_answer != nil %>	
+								<%= radio_button_tag 'answer', @questionObject.default_answer %>
+								I do not know <br>
+							<% end %>
+						<% end %>
+				
+					<% end %>
+					<br>
+					<br>
+					<%= hidden_field_tag "submit_count", @count_actual %>
+					<%= submit_tag "  NEXT  >>  ", :submit_count => @count_actual, :action => "check" %>
+				<% end %>
+				
+			<% else %>
+				<% if @section != nil %>
+					<h1><%= @section %></h1>
+				<% end %>
+			
+				<%= @question %>
+				<br>
+				<br>
+				<%= highlight('Press NEXT to continue', 'NEXT') %><br>
+				<%= button_to "  NEXT  >>  ", :submit_count => @count_actual, :action => "check" %>				
+			<% end %>
+			
+			<br><br><br>
+			<% if @back == true %>
+			Press <b>BACK</b> to go to the last question... <%= button_to "  <<  BACK   ", :action => "back", :submit_count => @count_actual %><br><br>
+			<% end %>
+			<% if @dummy != true && @questionObject.skip == true %>
+			If you feel uncomfortable answering this question, Press <b>SKIP</b>... <%= button_to "  < SKIP >  ", :action => "skip", :submit_count => @count_actual%>
+			<% end %>
+			</div>
+			</div>
+			
+			<br>
+			<br>
+			<div id="footer">
+	
+				<span id="design-by">Created with Survey JULIE</span> 
+		  			Copyright &copy; Michael Maness 2007-2011.
+	
+			</div>
+
+		</div>
+	</body>
+</html>
+
+<!-- JULIE: Software for Conducting Travel Surveys and Other Surveys --> 
+<!-- Created by Michael Maness -->
+<!-- Copyright 2007 - 2011 -->
