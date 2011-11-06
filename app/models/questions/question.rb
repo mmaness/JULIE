@@ -110,6 +110,11 @@ module RubyJulie
       return false
     end
     
+    # Used to verify if a question should have a text_area associated with it
+    def text_area?
+      return false
+    end
+    
     # Sets a default answer (not required)
     def default_answer=(answer)
       @default = answer
@@ -118,6 +123,11 @@ module RubyJulie
     # Returns the default answer
     def default_answer
       return @default
+    end
+    
+    # Used to verify if a question changes survey settings
+    def survey_settings?
+      return false
     end
     
   end
@@ -336,10 +346,10 @@ module RubyJulie
       @upper_bound = upperBound
     end
     
-    def isValid(answer, session)
-      puts "answer: " + answer.to_s
-      puts "default: " + @default.to_s
-      if (answer == @default && answer != nil)
+    def isValid(answer, variable_hash=nil)
+      puts "Default: #{@default.inspect}, Answer: #{answer.inspect}"
+      #TEMPORARY FIX, NEED TO CHANGE (need to figure out what the default answer truly is)
+      if (answer == @default.to_s && answer != nil)
         return true
       end
       
@@ -353,7 +363,7 @@ module RubyJulie
         return false
       end
       
-      return true
+      return super(answer)
     end
     
   end
@@ -383,7 +393,7 @@ module RubyJulie
       
     end
     
-    def isValid(answer, session)
+    def isValid(answer, variable_hash=nil)
       if (answer == @default && answer != nil)
         return true
       end
@@ -398,7 +408,7 @@ module RubyJulie
         return false
       end
       
-      return true
+      return super(answer)
     end
     
   end
@@ -409,7 +419,7 @@ module RubyJulie
       super(name, question)
     end
     
-    def isValid(answer)
+    def isValid(answer, variable_hash=nil)
       if (answer == @default && answer != nil)
         return true
       end
@@ -528,12 +538,24 @@ module RubyJulie
       @name = name
     end
     
+    def survey_settings?
+      return true
+    end
+    
+    def isValid(answer)
+      return true
+    end
+    
   end
   
   # A question which represents a block of code
   class CalculationBlock < Question
     
     def calculation?
+      return true
+    end
+    
+    def isValid(answer)
       return true
     end
     

@@ -4,6 +4,7 @@ JULIE::Application.routes.draw do
   match 'instructions' => 'survey#instructions'
   match 'question' => 'survey#question'
   match 'check' => 'survey#check'
+  match 'back' => 'survey#back'
   
   # The priority is based upon order of creation:
   # first created -> highest priority.

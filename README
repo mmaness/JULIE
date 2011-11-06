@@ -9,24 +9,59 @@ and Ruby programming language.
 
 
 == Release Notes
+Version 1.9.0
 
+This is the first version released publicly online.  Generally everything is new.
+The most important changes are the following:
+
+* JULIE updated to work with Rails 3.1.0 and Ruby 1.9.2.
+* Survenity: an external DSL is used for survey creation.
+* Surveys are stored in databases now rather than as Ruby objects.  This also means
+  that new database tables were added: Pages, Questions, and Experiments.
+* The Surveys database tables has been renamed Responses.
+* A Variables tables added which stores a hash of variables associated with a
+  respondent's session.
+* A Respondents database table has been added which will link the Responses table
+  and Variable tables to a particular respondent.
+* A new routing system is used during survey progression.
+* Updated many, but not all, code to be more consistent.  To have a unifed approach,
+  for example, question text will eventually be consistently labeled text everywhere
+  rather than text in Survenity and question in the controller.
 
 
 == Getting Started
 
+(See the wiki at http://www.github.com/mmaness/JULIE/wiki)
 
+To get started with JULIE, you need the following:
+
+* Operating System supported by Ruby (Windows, Mac OS/X, Linux)
+* Ruby 1.9.2-p290
+* Rails 3.1.0
+* SQLite 3.7.3
+* Bundler 1.0.18
+* Git 1.7.6 (optional)
+
+After installing those components successfully, download the JULIE package from Github 
+(https://github.com/mmaness/JULIE/zipball/master OR https://github.com/mmaness/JULIE/tarball/master) 
+and unzip/untar it a directory.  It is suggested that you rename the parent directory to "JULIE" 
+for consistency with the rest of the instructions.
 
 == Description of Contents
 
-The default directory structure of a generated Ruby on Rails application:
+The default directory structure of a JULIE application:
 
   |-- app
   |   |-- controllers
   |   |-- helpers
   |   |-- mailers
   |   |-- models
+  |       |-- surveys
+  |       |-- survenity
+  |       `-- questions
   |   `-- views
-  |       `-- layouts
+  |       |-- layouts
+  |       `-- survey
   |-- config
   |   |-- environments
   |   |-- initializers

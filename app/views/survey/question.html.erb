@@ -29,7 +29,7 @@
 				<% end %>
 				<h2>Question <%= @count %>.</h2>
 							
-				<% form_tag( {:action => "check"} ) do %>
+				<%= form_tag( {:action => "check"} ) do %>
 					
 					<% if flash[:notice] != nil %>
 						<div style="color: red" class="notice">Sorry, your answer was not valid:<br>
@@ -41,7 +41,7 @@
 					<br>
 					
 					<% if @choices == nil %>
-						<% if @questionObject.class == TimeOfDayQuestion %>
+						<% if @questionObject.class == RubyJulie::TimeOfDayQuestion %>
 							<%= select_tag "hour", options_for_select(@Hours) %>&nbsp;:
 							<%= select_tag "minute", options_for_select(@Minutes) %>&nbsp;&nbsp;
 							<%= select_tag "period", options_for_select(["AM","PM"])%>
@@ -51,7 +51,11 @@
 								I do not know
 							<% end %>
 						<% else %>
-							<%= text_field_tag("answer", "", {"size" => 30, "autocomplete" => "off"}) %>
+							<% if @questionObject.text_area? %>
+								<%= text_area_tag("answer", "", {"rows" => @questionObject.height, "cols" => @questionObject.width}) %>
+							<% else %>
+								<%= text_field_tag("answer", "", {"size" => 30, "autocomplete" => "off"}) %>
+							<% end %>
 							<% if @questionObject.default_answer != nil %>
 								<br>
 								<%= check_box_tag 'answer', @questionObject.default_answer %>
