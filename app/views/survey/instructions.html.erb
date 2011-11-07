@@ -52,7 +52,7 @@
 				button at the bottom of the page to skip the question.<br>
 				<hr><hr>
 				<br>			
-				<% form_tag( {:action => "question"} ) do %>
+				<%= form_tag( {:action => "question"} ) do %>
 					<%= highlight('Press NEXT to begin the survey...', 'NEXT') %><br>
 					<%= submit_tag "  NEXT  >>  " %>
 				<% end %>

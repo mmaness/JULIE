@@ -1365,7 +1365,7 @@ module DecimalLiteral
 end
 
 
-module Variable
+module VariableType
   
   def variable_name
     return identifier.to_sym

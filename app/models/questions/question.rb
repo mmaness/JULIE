@@ -30,6 +30,8 @@ module RubyJulie
       @invalidInput = nil
       @default = nil
       @skip = true
+      @before_calculations = ""
+      @after_calculations = ""
     end
     
     # Returns true is the response given is a valid response to the question
@@ -357,6 +359,13 @@ module RubyJulie
         @invalidInput = "Your answer must be a whole number."
         return false
       end
+      
+      @upper_bound = variable_hash[@upper_bound] if @upper_bound.is_a?(Symbol)
+      @lower_bound = variable_hash[@lower_bound] if @lower_bound.is_a?(Symbol)
+      
+      @upper_bound = @upper_bound.to_i if @upper_bound.is_a?(String)
+      @lower_bound = @lower_bound.to_i if @lower_bound.is_a?(String)
+      
       
       if (answer.to_i > @upper_bound || answer.to_i < @lower_bound)
         @invalidInput = "Your answer must be between " + @lower_bound.to_s + " and " + @upper_bound.to_s + "."

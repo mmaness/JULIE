@@ -42,9 +42,15 @@ ActiveRecord::Schema.define(:version => 20111104150114) do
   end
 
   create_table "responses", :force => true do |t|
-    t.integer  "respondent_id", :null => false
+    t.integer  "respondent_id",   :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "GeneralSettings"
+    t.string   "ExpInstructions"
+    t.string   "SP1"
+    t.string   "SP2"
+    t.string   "SP3"
+    t.string   "SP4"
   end
 
   create_table "variables", :force => true do |t|

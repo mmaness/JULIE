@@ -3,7 +3,9 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-require 'rake/dsl_definition'   #Added to deal with uninitialized constant Rake::DSL
+# Added to deal with uninitialized constant Rake::DSL, but doesn't work on all systems... 
+# Encourage use of 'bundle exec db:migrate' instead
+#require 'rake/dsl_definition'   
 
 require 'rake'
 

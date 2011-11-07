@@ -496,7 +496,7 @@ grammar Survenity
 	########################################
 	
 	rule types
-		(function / variable / number / array / string) optional_space
+		(function / variable / number / array / string / constant) optional_space
 	end
 	
 	# Change this implementation to not use the '*' multiplier

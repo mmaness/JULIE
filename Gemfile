@@ -6,12 +6,13 @@ gem 'rails', '3.0.10'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'sqlite3'
+gem 'rake', '0.8.7'
 
 gem 'citrus'
 gem 'treetop'
 
-gem 'mongrel', '>= 1.2.0.pre2'
-gem 'ruby-debug19'
+#gem 'mongrel', '>= 1.2.0.pre2'
+
 
 # Use unicorn as the web server
 # gem 'unicorn'

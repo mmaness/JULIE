@@ -5,6 +5,58 @@ SurveySettings GeneralSettings
   survey_name "Vacation Choice Survey"
   survey_description "A simple survey to show JULIE's features"
   
+Dummy Intro
+  text "Welcome to the Vacation Choice Survey"
+  text ""
+  text "First, you will be asked a series of questions about your most recent vacation."
+  calculation after
+    x = 2
+  end
+  
+YesNo RecentVacation
+  text "Have you taken a vacation away from home within the last 12 months?"
+  text "(Debug statement: The value of x is :x)"
+  
+MultipleBranch RecentVacationBranch
+  reference RecentVacation
+  branch "Yes", TripLength
+  default_branch EndOfSurvey
+  
+Integer TripLength
+  text "In terms of days, how long was your trip?"
+  bounds 0, 365
+  
+MultipleChoice Enjoyment
+  text "How much did you enjoy your trip?"
+  choice "Very much"
+  choice "Somewhat"
+  choice "Indifferent"
+  choice "Not much"
+  choice "Not at all"
+  
+YesNo International
+  text "For your most recent trip, did you leave the country?"
+  
+MultipleBranch InternationalBranch
+  reference International
+  branch "Yes", Country
+  branch "No", State
+  
+OpenEnded Country
+  text "What country did you visit primarily?"
+  text "(If you visited more than one country, which country did you spend the most time at?)"
+  
+SingleBranch City
+
+OpenEnded State
+  text "What state did you visit?"
+  
+OpenEnded City
+  text "What city did you visit?"
+  
+TextArea TripReason
+  text "How did you decide on visiting #(Country) #(City) #(State)?"
+  
 Dummy ExpInstructions
   text "You will be given four scenarios about different vacations you could choose from."
   
@@ -60,5 +112,8 @@ ChoiceExperiment VacationChoice
   add_design <- [1 1 1]
   add_design <- [0 1 0]
   add_design <- [1 0 1]
+  
+Calculation EndOfSurvey
+  1+1
   
 EndSurvey

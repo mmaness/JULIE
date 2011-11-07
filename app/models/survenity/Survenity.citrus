@@ -501,7 +501,7 @@ grammar SurvenityGrammar
 	########################################
 	
 	rule types
-		(function | variable | number | array | string) optional_space
+		(function | variable | number | array | string | constant) optional_space
 	end
 	
 	# Change this implementation to not use the '*' multiplier
@@ -543,7 +543,7 @@ grammar SurvenityGrammar
 	
 	rule variable
 		(!(keywords (mandatory_space | end_of_line)) 
-		identifier:([a-z] [a-zA-Z0-9_]*) array_index*) <Variable>
+		identifier:([a-z] [a-zA-Z0-9_]*) array_index*) <VariableType>
 	end
 	
 	rule array_index

@@ -89,6 +89,13 @@ module Kaywinnit
       questions.each do
         |question|
         print "    Adding question #{question.name} to the question list... "
+        
+        #Doesn't add Questions to database if they have no responses that should be stored
+        if question.dummy? || question.calculation? || question.link? || question.survey_settings?
+          print "Question NOT added to database successfully.\n"
+          next
+        end
+        
         question_entry = Question.new
         question_entry.question_name = question.name
         question_entry.question_object = question

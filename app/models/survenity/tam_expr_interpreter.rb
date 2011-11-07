@@ -25,6 +25,7 @@ module Tam
   
   def self.run_interpreter(statement_block, variable_hash)
     #Parse the calculations
+    load "#{File.dirname(__FILE__)}/survenity_nodes.rb"
     Citrus.load "#{File.dirname(__FILE__)}/Survenity"
     match = SurvenityGrammar.parse(statement_block.strip, :root => 'calculation')  #Need to remove trailing whitespace, calculation rule does not handle trailing whitespace
     statement_list = match.statements

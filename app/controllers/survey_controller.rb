@@ -21,21 +21,20 @@ class SurveyController < ApplicationController
   #load 'questions/choice_experiment.rb'
   
   def instructions
-    debugger
     @name = "Survey Instructions"
     @description = ""
     
     #Initialize the Respondent, add entry to database
     if session[:count] == nil
       @respondent = Respondent.new
-      @variable_hash = Variable.new
-      @variable_hash.variable_hash = {}
-      @respondent.variable = @variable_hash
+      @variable = Variable.new
+      @variable.variable_hash = {}
+      @respondent.variable = @variable
       @response = Response.new
       @respondent.response = @response
       
       @respondent.save
-      @variable_hash.save
+      @variable.save
       @response.save
       
       session[:ID] = @respondent.id
@@ -43,6 +42,8 @@ class SurveyController < ApplicationController
       session[:ques_count] = 1   #Keeps track of the number of questions the user has seen
       session[:section] = ""     #Keeps track of the section to show to the user
       session[:sequence] = []
+      session[:survey_name] = ""
+      session[:survey_description] = ""
     end
 
   end
@@ -54,7 +55,8 @@ class SurveyController < ApplicationController
     @questionObject = @page.questions[0].question_object
     
     @respondent = Respondent.find_by_id(session[:ID])
-    @variable_hash = @respondent.variable
+    @variable = @respondent.variable
+    @variable_hash = @variable.variable_hash
         
     if @questionObject.survey_settings?
       session[:survey_name] = @questionObject.survey_name if @questionObject.survey_name
@@ -89,8 +91,12 @@ class SurveyController < ApplicationController
     if (@questionObject.link? == true)
       
       if @questionObject.class == RubyJulie::MultipleChoiceLink
-        #puts "Question name: #{@questionObject.name}\nBase question name: " + @questionObject.baseQuestionName
-        session[:count] = Page.find_by_id(Question.find_by_question_name(@questionObject.nextQuestion(@survey.send(@questionObject.base_question_name))).page_id).sequence_id
+        begin
+          next_page_id = Question.find_by_question_name(@questionObject.nextQuestion(@survey.send(@questionObject.base_question_name))).page_id
+        rescue NoMethodError => e
+          raise NoMethodError, "In a MultipleBranch, the question name given for a possible branch, #{@questionObject.nextQuestion(@survey.send(@questionObject.base_question_name))}, does not exist in the survey.\n\nOriginal Exception Throw: " + e.to_s, e.backtrace
+        end
+        session[:count] = Page.find_by_id(next_page_id).sequence_id
       elsif @questionObject.class == RubyJulie::SingleLink
         session[:count] = Page.find_by_id(Question.find_by_question_name(@questionObject.nextQuestion()).page_id).sequence_id
       end
@@ -101,7 +107,6 @@ class SurveyController < ApplicationController
       if (@questionObject.is_a?(RenameExperiment))
         @questionObject.execute(@questions)
       else
-        puts @survey.class.to_s
         @questionObject.execute(session, @survey)
       end
       
@@ -152,12 +157,12 @@ class SurveyController < ApplicationController
     @question = @page.questions[0].question_object
     
     @respondent = Respondent.find_by_id(session[:ID])
-    @variable_hash = @respondent.variable
+    @variable = @respondent.variable
+    @variable_hash = @variable.variable_hash
     
     @name = session[:survey_name]
     @description = session[:survey_description]
     
-    puts "count: #{@count.inspect}"
     @count = session[:ques_count]
     @count_actual = session[:count]
     
@@ -234,6 +239,9 @@ class SurveyController < ApplicationController
 
     @page = Page.find_by_sequence_id(session[:count])
     @question = @page.questions[0].question_object
+    @respondent = Respondent.find_by_id(session[:ID])
+    @variable = @respondent.variable
+    @variable_hash = @variable.variable_hash
     
     # Checks to see if the submit button was pressed twice or more
     if params[:submit_count].to_i != session[:count].to_i
@@ -265,22 +273,31 @@ class SurveyController < ApplicationController
         if @question.scenario?
           # Some scenarios may allow for some added information to be stored in the database, this checks that
           if session[:entry_prefix] != nil
-            Response.update(session[:ID], { @question.name => session[:entry_prefix].to_s + session[:design] + " -- " + params[:answer]})
+            response = session[:entry_prefix].to_s + session[:design] + " -- " + params[:answer]
             session[:entry_prefix] = nil
           else
-            Response.update(session[:ID], { @question.name => session[:design] + " -- " + params[:answer]})
+            response = session[:design] + " -- " + params[:answer]
           end
         elsif @question.database?
           if @question.value.is_a?(Symbol)
-            Response.update(session[:ID], { @question.name => session[@question.value] })
+            response = session[@question.value]
           else
-            Response.update(session[:ID], { @question.name => @question.value })  
+            response = @question.value  
           end
         else
-          Response.update(session[:ID], { @question.name => params[:answer] })
+          response = params[:answer]
         end
+        
+        Response.update(session[:ID], { @question.name => response})
+        @variable_hash[@question.name.to_sym] = response
+        
         session[:ques_count] += 1
       end
+      
+      #Perform post-render calculations for the current questions
+      puts "After Calculations: #{@question.after_calculations.inspect}"
+      load 'survenity/tam_expr_interpreter.rb' if @question.after_calculations && @question.after_calculations != "" 
+      Tam::run_interpreter(@question.after_calculations, @variable_hash) if @question.after_calculations && @question.after_calculations != ""
       session[:count] += 1
     else
       flash[:notice] = @question.invalidInput
@@ -288,11 +305,24 @@ class SurveyController < ApplicationController
       return
     end
     
-    
     if Page.find_by_sequence_id(session[:count]) == nil
+      #Update the variable hash
+      @variable.variable_hash = @variable_hash
+      @variable.save
       redirect_to :action => "results" 
     else
-      redirect_to :action => "question" 
+      #Perform pre-render calculations for the next question
+      next_page = Page.find_by_sequence_id(session[:count]+1)
+      if next_page    #Check if the next question exists
+        next_question = next_page.questions[0].question_object
+        load 'survenity/tam_expr_interpreter.rb' if @question.before_calculations && next_question.before_calculations != ""
+        Tam::run_interpreter(next_question.before_calculations, @variable_hash) if @question.before_calculations && next_question.before_calculations != ""
+      end
+      
+      #Update the variable hash
+      @variable.variable_hash = @variable_hash
+      @variable.save
+      redirect_to :action => "question"
     end
   end
   
@@ -331,7 +361,7 @@ class SurveyController < ApplicationController
     @name = session[:survey_name]
     @description = session[:survey_description]
     @respondent = Respondent.find_by_id(session[:ID])
-    @variable_hash = @respondent.variable
+    @variable = @respondent.variable
   end
 
   
