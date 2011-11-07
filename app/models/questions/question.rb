@@ -644,15 +644,15 @@ module RubyJulie
   # A link which will always go to a particular question
   class SingleLink < LogicLink
     
-    attr_accessor :name, :questionName
+    attr_accessor :name, :next_question
     
-    def initialize(linkName, baseQuestionName)
-      super(linkName)
-      @questionName = baseQuestionName
+    def initialize(link_name, next_question_name)
+      @name = link_name
+      @next_question = next_question_name
     end
     
     def nextQuestion
-      return @questionName
+      return @next_question
     end
   end
   

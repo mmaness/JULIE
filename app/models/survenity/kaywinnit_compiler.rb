@@ -133,6 +133,10 @@ module Kaywinnit
       end
       page_hash[parse_tree.question_name.value] = questions
       
+    when :single_branch
+      questions = [translate_question(parse_tree, page_hash)]
+      page_hash[questions[0].name] = questions
+      
     else
       check_for_repeating_question_names(parse_tree, question_names)
       questions = [translate_question(parse_tree, page_hash)]

@@ -53,7 +53,7 @@ module MeiMei
       Question.all.each do
         |question|
         begin
-          add_column(:responses, question.question_name.to_s, :string)
+          add_column(:responses, question.question_name.to_s, :string) unless question.dummy? || question.calculation? || question.link? || question.survey_settings?
         rescue
           #column already exists with that name
         end
