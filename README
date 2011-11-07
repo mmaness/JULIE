@@ -37,16 +37,34 @@ The most important changes are the following:
 To get started with JULIE, you need the following:
 
 * Operating System supported by Ruby (Windows, Mac OS/X, Linux)
-* Ruby 1.9.2-p290
-* Rails 3.1.0
-* SQLite 3.7.3
-* Bundler 1.0.18
-* Git 1.7.6 (optional)
+* Ruby 1.9.3-p0
+* Rails 3.0.10 or higher
+* SQLite 3.5.6
+* Bundler 1.0.21
 
 After installing those components successfully, download the JULIE package from Github 
 (https://github.com/mmaness/JULIE/zipball/master OR https://github.com/mmaness/JULIE/tarball/master) 
-and unzip/untar it a directory.  It is suggested that you rename the parent directory to "JULIE" 
+and unzip/untar it a directory.  It is suggested that you rename the parent directory to "JULIE-180" 
 for consistency with the rest of the instructions.
+
+Using a command line tool, go to the JULIE-180 directory.  To install the dependencies, use the 
+following command:
+  bundle install
+
+With the dependencies installed, create the development and production databases.  First change 
+directories to /JULIE-180/db/ then use the following commands:
+  sqlite3 development.sqlite3 ""
+  sqlite3 production.sqlite3 ""
+  
+With the databases in place, populate them with tables by using Rails migrations.  Use the 
+following command:
+  bundle exec rake db:migrate
+
+You should be set to begin developing surveys with JULIE.  To start the Rails server, use the following command:
+  rails server
+  
+Then point your browser to http://localhost:3000 to see a splash screen for Rails.  If that happens, then 
+congratulations, you have completed the process successfully.
 
 == Description of Contents
 
