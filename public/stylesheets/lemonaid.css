@@ -91,10 +91,10 @@ text-align:left
 }
 
 div#content p, div#extra p, div#sidebar p {
-font-family: "Lucida Grande", Tahoma, Arial, Helvetica, sans-serif;
-font-size: 11px;
+font-family: "Arial", Tahoma, Arial, Helvetica, sans-serif;
+font-size: 18px;
 color: #444;
-line-height:1.8em;
+line-height:1.0em;
 }
 
 div#content h1, div#extra h1, div#sidebar h1 {

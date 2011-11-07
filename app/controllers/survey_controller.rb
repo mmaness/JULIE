@@ -17,7 +17,11 @@
 
 class SurveyController < ApplicationController
   
+  #load 'questions/question.rb'
+  #load 'questions/choice_experiment.rb'
+  
   def instructions
+    debugger
     @name = "Survey Instructions"
     @description = ""
     
@@ -44,10 +48,8 @@ class SurveyController < ApplicationController
   end
   
   def question
-    
     load 'questions/question.rb'
     
-    puts "page id: #{session[:count]}"
     @page = Page.find_by_sequence_id(session[:count])
     @questionObject = @page.questions[0].question_object
     
@@ -59,8 +61,7 @@ class SurveyController < ApplicationController
       session[:survey_description] = @questionObject.survey_name if @questionObject.description
       session[:section] = @questionObject.section if @questionObject.section
       
-      redirect_to :action => "check", :submit_count => session[:count]
-      return
+      return redirect_to :action => "check", :submit_count => session[:count]
     end
     
     @survey = Respondent.find_by_id(session[:ID]).response
@@ -72,7 +73,7 @@ class SurveyController < ApplicationController
     
     #Redirects to the scenario page if the question is a scenario
     if @questionObject.scenario?
-      redirect_to :action => "scenario"
+      return redirect_to :action => "scenario"
     end
     
     #Redirects to check if the question is used to populate the database
@@ -126,16 +127,103 @@ class SurveyController < ApplicationController
     
     if @count == 1 && @count_actual == 1
       @back = false
+    elsif @coutn == 1 && (Page.first.questions[0].question_object.calculation? || Page.first.questions[0].question_object.survey_settings?)
+      @back = false
     else
       @back = true
     end
   end
   
   
+  # Method/Page to display SP scenario questions
+  def scenario
+    load 'questions/question.rb'
+    load 'questions/choice_experiment.rb'
+    
+    if session[:count] == nil
+      redirect_to :action => "survey"
+    end
+    
+    @survey = Respondent.find_by_id(session[:ID]).response
+    
+    @page = Page.find_by_sequence_id(session[:count])
+    return redirect_to :action => "results" unless @page   #If page isn't found, because sequence ID doesn't match, then the survey must have been completed
+    
+    @question = @page.questions[0].question_object
+    
+    @respondent = Respondent.find_by_id(session[:ID])
+    @variable_hash = @respondent.variable
+    
+    @name = session[:survey_name]
+    @description = session[:survey_description]
+    
+    puts "count: #{@count.inspect}"
+    @count = session[:ques_count]
+    @count_actual = session[:count]
+    
+    # Redirects to the default survey page if the current question isn't a scenario
+    if @question.scenario? != true
+      return redirect_to :action => "survey"
+    end
+    
+    @experiment = Experiment.find_by_name(@question.choice_experiment_name).choice_exp_object
+    
+    @pre_table_text = @experiment.question if @experiment.question
+    @pre_table_text += @question.pre_table_text
+    @pre_table_text = replaceVariablesInString(@pre_table_text, @survey)
+    @pre_table_text = replaceSymbolsInString(@pre_table_text, @variable_hash)
+    
+    @after_table_text = @experiment.after_table_text
+    @after_table_text += @question.post_table_text if @question.post_table_text
+    @after_table_text = replaceVariablesInString(@after_table_text, @survey)
+    @after_table_text = replaceSymbolsInString(@after_table_text, @variable_hash)
+
+    @choices = @experiment.options
+    @choices += @question.choices if @question.choices
+    attributes = @experiment.attribute_labels
+    
+    @alternatives = Array.new
+    if attributes != nil
+      @alternatives.push("")
+    end
+    @alternatives.concat(@experiment.alternatives)
+    
+    #PLACE HOLDER FOR CHANGES TO THE EXPERIMENTS WHICH WILL ALLOW FOR DESIGNS W/O REPLACEMENT
+    designs_used = nil
+    
+    @rows = @question.rows(@experiment, designs_used)
+    index = 0
+    
+    @rows.each do
+      |row|
+      
+      # Add attribute labels to the left column of the table
+      if attributes != nil
+        if attributes[index] == nil
+          row.reverse!.push("").reverse!
+        else
+          row.reverse!.push(attributes[index]).reverse!
+        end
+      end
+      
+      index += 1
+      row.map! {|cell| replaceSymbolsInString(replaceVariablesInString(cell, @survey), @variable_hash)}
+    end
+    
+    session[:design] = @question.design.join(" ")
+    
+    if @count == 0 && @count_actual == 0
+      @back = false
+    else
+      @back = true
+    end
+    
+  end
+  
+  
   # Method/Page to check that an answer is valid (future function),
   # increment the survey questions, and redirect the user as needed
   def check
-    
     load 'questions/question.rb'
     
     if session[:answer] == nil
@@ -236,6 +324,14 @@ class SurveyController < ApplicationController
     end
     
     redirect_to :action => "question"
+  end
+  
+  
+  def results
+    @name = session[:survey_name]
+    @description = session[:survey_description]
+    @respondent = Respondent.find_by_id(session[:ID])
+    @variable_hash = @respondent.variable
   end
 
   

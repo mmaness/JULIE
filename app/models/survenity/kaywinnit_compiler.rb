@@ -107,6 +107,7 @@ module Kaywinnit
       exp = Experiment.new
       exp.name = exp_name
       exp.choice_exp_object = exp_object
+      puts exp.choice_exp_object.class
       exp.save
       print "Experiment added to database successfully\n"
     end
@@ -289,7 +290,7 @@ module Kaywinnit
     
     when :scenario_question
       puts "    Question Type: Scenario"
-      question = RubyJulie::ScenarioQuestion.new(parse_tree.question_name.value)
+      question = RubyJulie::ScenarioQuestion.new(parse_tree.question_name.value, parse_tree.experiment_name.value)
       question_traits(question, parse_tree)
       choice_traits(question, parse_tree)
       question.pre_table_text = parse_tree.pre_table_text
@@ -410,7 +411,7 @@ module Kaywinnit
     parse_tree.attributes.each do
       |attribute|
       warn "  Warning: In Choice Experiment #{parse_tree.experiment_name.value}, attribute #{attribute.attribute_name} has more than one label (i.e. more than one 'attribute_label' trait).  Only the first label will be used" if attribute.multiple_labels_warning
-      raise Mal::LevelsWithSameIndexError, "In Choice Experiment #{parse_tree.experiment_name.value}, attribute #{attribute.attribute_name} has more than one level with the same index (i.e. two or more 'add_level' traits have the same index parameter." if attribute.levels_with_same_index_error
+      raise Mal::LevelsWithSameIndexError, "In Choice Experiment #{parse_tree.experiment_name}, attribute #{attribute.attribute_name} has more than one level with the same index (i.e. two or more 'add_level' traits have the same index parameter." if attribute.levels_with_same_index_error
     end 
     
     experiment_hash[parse_tree.constant.value] = experiment

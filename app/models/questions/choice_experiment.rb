@@ -16,13 +16,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-begin
-  load 'question.rb'
-rescue LoadError
-  load '../questions/question.rb'      
-end
-
-
 
 module RubyJulie
     
@@ -161,17 +154,32 @@ module RubyJulie
     
     
     # Generates an array of scenario designs corresponding to each alternative
-    def generate_scenario_design
+    def generate_scenario_design(designs_used=nil)
       scenario = Array.new
       
-      @alternatives.each_index do
-        |alt|
-        if @same_design[alt] == nil
-          scenario << rand(@exp_design.size)
-        else
-          scenario << scenario[@same_design[alt]]
+      if designs_used == nil
+        @alternatives.each_index do
+          |alt|
+          if @same_design[alt] == nil
+            scenario << rand(@exp_design.size)
+          else
+            scenario << scenario[@same_design[alt]]
+          end
+        end
+      else
+        @alternatives.each_index do
+          |alt_index|
+          if @same_design[alt] == nil
+            available_designs = Array.new(@exp_design.size) {|i| i}    #Creates an array of sequenital numbers
+            available_designs = available_designs - designs_used[alt_index]
+            scenario_index = rand(@available_designs.size)
+            scenario << available_designs[scenario_index]
+          else
+            scenario << scenario[@same_design[alt]]
+          end
         end
       end
+      
       
       return scenario
     end
@@ -267,83 +275,4 @@ module RubyJulie
     
   end
   
-  
-  class Scenario < RubyJulie::MultipleChoice
-    
-    attr_accessor :experiment, :design, :block
-    
-    def initialize(name, experiment, question = "")
-      super(name, question)
-      @experiment = experiment
-      @block = nil
-    end
-    
-    def scenario?
-      return true
-    end
-    
-    def rows(design = nil)
-      # Initializes the table that represents the list of attribute levels for the respondent to see
-      table = Array.new(@experiment.variables.size)
-      (0..table.size-1).each do
-        |i|
-        table[i] = Array.new(@experiment.alternatives.size)
-      end
-      
-      
-      alts = @experiment.alternatives
-      
-      # Determines which scenarios to run (which columns from experimental design array/chart)
-      if design == nil
-        design = @experiment.generate_scenario_design
-      end
-      #puts design.inspect
-      puts "entire design... " + @experiment.exp_design.inspect.to_s
-      puts "design... " + design.inspect.to_s
-      puts @experiment.exp_design[design[0]].inspect
-      puts @experiment.exp_design[design[1]].inspect
-      puts @experiment.exp_design[design[2]].inspect
-      #puts @experiment.exp_design[design[3]].inspect
-      
-      for i in (0..table.size-1) do
-        #puts "@experiment.variables[#{i.to_s}]=" + @experiment.variables[i].to_s 
-        for j in (0..alts.size-1) do
-          level = @experiment.exp_design[design[j]][i]
-          #puts @experiment.variables[i].levels.to_s
-          #puts @experiment.variables[i].levels[j]
-          #puts @experiment.exp_design[design[j]].inspect
-          table[i][j] = @experiment.variables[i].levels[j][level].question
-          #puts "row #{j.to_s}:" + @experiment.variables[i].levels[j].inspect.to_s
-          #puts "I picked level #{level.to_s}"
-          #puts i.to_s + ":" + j.to_s + "--" + table[i][j]
-          #puts "Table:" + table.inspect
-        end
-      end
-      
-      @design = design
-      
-      return table
-    end
-    
-    def alternatives
-      return @experiment.alternatives
-    end
-    
-    def choices
-      return @experiment.options
-    end
-    
-    def question
-      return @experiment.question
-    end
-    
-    def after_table_text
-      return @experiment.after_table_text
-    end
-    
-    def attribute_labels
-      return @experiment.attribute_labels
-    end
-    
-  end
 end

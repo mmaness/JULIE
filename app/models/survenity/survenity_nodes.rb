@@ -483,10 +483,7 @@ end
 
 module ScenarioQuestion
   include QuestionType
-  
-  def choices
-    # IMPLEMENT THIS!!!
-  end
+  include ChoiceQuestion
   
   def no_text_warning
     return false

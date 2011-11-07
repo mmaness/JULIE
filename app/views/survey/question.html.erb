@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>Question <%= @count %> - Travel Survey</title>
+		<title>Question <%= @count %> - <%= @name %>></title>
 		<meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
 		<link href="/stylesheets/lemonaid.css" rel="stylesheet" type="text/css"/>
 	</head>
@@ -16,8 +16,8 @@
 			</div>
 
 			<div id="header">
-			  <h1><%= @name %></h1>
-			  <h2><%= @description %></h2>
+			  <h1><%= @name.html_safe %></h1>
+			  <h2><%= @description.html_safe %></h2>
 			</div>
 			
 			<div id="wrapper">
@@ -25,7 +25,7 @@
 
 			<% if @dummy != true %>
 				<% if @section != nil %>
-					<h1><%= @section %></h1>
+					<h1><%= @section.html_safe %></h1>
 				<% end %>
 				<h2>Question <%= @count %>.</h2>
 							
@@ -37,7 +37,8 @@
 						<br>
 					<% end %>
 				
-					<%= @question %>
+					
+					<%= @question.html_safe %>
 					<br>
 					
 					<% if @choices == nil %>
@@ -88,10 +89,10 @@
 				
 			<% else %>
 				<% if @section != nil %>
-					<h1><%= @section %></h1>
+					<h1><%= @section.html_safe %></h1>
 				<% end %>
 			
-				<%= @question %>
+				<%= @question.html_safe %>
 				<br>
 				<br>
 				<%= highlight('Press NEXT to continue', 'NEXT') %><br>
@@ -112,7 +113,7 @@
 			<br>
 			<div id="footer">
 	
-				<span id="design-by">Created with Survey JULIE</span> 
+				<span id="design-by">Created with <a href="http://www.github.com/mmaness/JULIE">JULIE</a></span> 
 		  			Copyright &copy; Michael Maness 2007-2011.
 	
 			</div>

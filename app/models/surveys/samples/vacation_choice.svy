@@ -1,0 +1,64 @@
+# A simple survey about vacation preferences
+# Written by Michael Maness
+
+SurveySettings GeneralSettings
+  survey_name "Vacation Choice Survey"
+  survey_description "A simple survey to show JULIE's features"
+  
+Dummy ExpInstructions
+  text "You will be given four scenarios about different vacations you could choose from."
+  
+Scenario SP1
+  experiment VacationChoice
+  
+Scenario SP2
+  experiment VacationChoice
+  
+Scenario SP3
+  experiment VacationChoice
+  
+Scenario SP4
+  experiment VacationChoice
+  
+ChoiceExperiment VacationChoice
+  
+  attribute Attractions
+    attribute_label "Attractions"
+    add_level 0, 0
+      "Beach"
+    add_level 1, 1
+      "Ski Resort"
+  attribute Cost
+    attribute_label "Trip Cost"
+    add_level 0, 500
+      "$500"
+    add_level 1, 750
+      "$750"
+  attribute Nights
+    attribute_label "Trip Length"
+    add_level 0, 3
+      "3 Nights"
+    add_level 1, 5
+      "5 Nights"
+  
+  alternative "Vacation A"
+    set_levels_for Attractions <- [0 1]
+    set_levels_for Cost <- [0 1]
+    set_levels_for Nights <- [0 1]
+  alternative "Vacation B"
+    set_levels_for Attractions <- [0 1]
+    set_levels_for Cost <- [0 1]
+    set_levels_for Nights <- [0 1]
+  
+  pre_table_text "The following vacation options are available:"
+  post_table_text "From the vacations shown above, which would you prefer for your next trip?"
+  
+  choice "I will take Vacation A"
+  choice "I will take Vacation B"
+  
+  add_design <- [0 0 0]
+  add_design <- [1 1 1]
+  add_design <- [0 1 0]
+  add_design <- [1 0 1]
+  
+EndSurvey

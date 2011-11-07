@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Question <%= @count %> - <%= @name %></title>
+		<meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
+		<link href="/stylesheets/lemonaid.css" rel="stylesheet" type="text/css"/>
+	</head>
+	<body>
+		
+		<div id="container">
+
+			<div id="navigation">
+				<ul>
+					<li><img src="/images/umd_logo.gif" alt="UMD" width="100%" /> </li>
+				</ul>
+			</div>
+
+			<div id="header">
+			  <h1><%= @name.html_safe %></h1>
+			  <h2><%= @description.html_safe %></h2>
+			</div>
+			
+			<div id="wrapper">
+			<div id="content">
+
+			<% if @dummy != true %>
+
+				<% if @section != nil %>
+					<h1><%= @section.html_safe %></h1>
+				<% end %>
+				<h2>Question <%= @count %>.</h2>
+							
+				<% form_tag :action => "check" do %>
+					
+					<% if flash[:notice] != nil %>
+						<div style="color: red" class="notice">Sorry, your answer was not valid:<br>
+						<%= flash[:notice] %></div>
+					<% end %>
+				
+					<%= @pre_table_text.html_safe if @pre_table_text%>
+					<br>
+					<br>
+					
+					<%# The choice experiment table with alternatives and attributes %>
+					<table border = 1>
+						<tr align=center>
+							<% @alternatives.each do |alt|%>
+								<th width=<%= "#{(100/@alternatives.size).to_s}%" %> ><%= alt %></th>
+							<% end %>
+						</tr>
+						<% @rows.each do |row| %>
+							<tr align=center >
+								<% row.each do |entry|%>
+									<td><%= entry.html_safe %></td>
+								<% end %>
+							</tr>
+						<% end %>
+					</table>
+					
+					<br/>
+					<%= @after_table_text.html_safe if @after_table_text%>
+					<br/>
+					
+					<h2>
+					<% for index in 0..(@choices.size-1) %>
+						<%= radio_button_tag 'answer', index %>
+						<%= @choices[index].html_safe%> <br/>
+					<% end %>
+					</h2>
+					
+					<br>
+					<br>
+					<%= hidden_field_tag "submit_count", @count_actual %>
+					<%= submit_tag "  NEXT  >>  ", :submit_count => @count_actual, :action => "check" %>
+					
+				<% end %>
+				
+			<% else %>
+				<%= simple_format(@question) %>
+				<br/>
+				<br/>
+				<%= highlight('Press NEXT to continue', 'NEXT') %><br/>
+				<%= button_to "  NEXT  >>  ", :action => "check" %>
+			<% end %>
+			
+			
+			</div>
+			</div>
+			
+			<br>
+			<br>
+			<div id="footer">
+	
+				<span id="design-by">Created with <a href="http://www.github.com/mmaness/JULIE">JULIE</a></span> 
+		  			Copyright &copy; Michael Maness 2007-2011.
+	
+			</div>
+
+		</div>
+	</body>
+</html>
+
+
+<!-- JULIE: Software for Conducting Travel Surveys and Other Surveys --> 
+<!-- Created by Michael Maness -->
+<!-- Copyright 2007 - 2010 -->

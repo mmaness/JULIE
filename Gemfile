@@ -10,6 +10,9 @@ gem 'sqlite3'
 gem 'citrus'
 gem 'treetop'
 
+gem 'mongrel', '>= 1.2.0.pre2'
+gem 'ruby-debug19'
+
 # Use unicorn as the web server
 # gem 'unicorn'
 

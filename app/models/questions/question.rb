@@ -564,15 +564,49 @@ module RubyJulie
   # A question which represents a scenario from a choice experiment
   class ScenarioQuestion < MultipleChoice
     
-    attr_reader :choice_experiment_name, :pre_table_text, :post_table_text
+    attr_reader :choice_experiment_name, :design
+    attr_accessor :pre_table_text, :post_table_text 
     
     def initialize(name, choice_experiment_name)
       @name = name
       @choice_experiment_name = choice_experiment_name
     end
     
+    def scenario?
+      return true
+    end
+    
+    # Determines the rows to show for this scenario
+    # Must give the method an Experiment object
+    def rows(experiment, designs_used = nil, design = nil)
+      # Initializes the table that represents the list of attribute levels for the respondent to see      
+      table = Array.new(experiment.variables.size)
+      (0..table.size-1).each do
+        |i|
+        table[i] = Array.new(experiment.alternatives.size)
+      end
+      
+      alts = experiment.alternatives
+      
+      # Determines which scenarios to run (which columns from experimental design array/chart)
+      if design == nil
+        design = experiment.generate_scenario_design
+      end
+      
+      for i in (0..table.size-1) do
+        for j in (0..alts.size-1) do
+          level = experiment.exp_design[design[j]][i]
+          table[i][j] = experiment.variables[i].levels[j][level].question
+        end
+      end
+      
+      @design = design
+      
+      return table
+    end
     
   end
+  
   
   # An abstract object used to provide special support for situations in which logic is
   # required to change the question sequence
