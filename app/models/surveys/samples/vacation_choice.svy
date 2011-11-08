@@ -4,6 +4,7 @@
 SurveySettings GeneralSettings
   survey_name "Vacation Choice Survey"
   survey_description "A simple survey to show JULIE's features"
+  section "Section 1 of 2: Most Recent Trip"
   
 Dummy Intro
   text "Welcome to the Vacation Choice Survey"
@@ -56,6 +57,9 @@ OpenEnded City
   
 TextArea TripReason
   text "How did you decide on visiting #(Country) #(City) #(State)?"
+  
+SurveySettings NewSection
+  section "Section 1 of 2: Future Trip"
   
 Dummy ExpInstructions
   text "You will be given four scenarios about different vacations you could choose from."

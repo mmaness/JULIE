@@ -40,7 +40,8 @@ module Kaywinnit
     # Check the type of the parameter
     raise TypeError, "Expected an object of type ParsedSurvey in method compile_survey()." if parsed_survey.class != ParsedSurvey
     
-    page_hash = {}  #Ordered hash of pages with values corresponding to the questions on that page
+    page_hash = {}  # hash of pages with values corresponding to the questions on that page
+    page_list = []
     experiment_hash = {}
     question_names = []  #Array of questions which is used to ensure multiple questions don't have same name
     @@num_single_links = 0
@@ -50,7 +51,7 @@ module Kaywinnit
     parsed_survey.pages.each do
       |page_tree|
       puts "Translating page #{parsed_survey.pages.index(page_tree)+1}:"
-      translate_page(page_tree, page_hash, question_names)
+      translate_page(page_tree, page_hash, page_list, question_names)
     end
     puts "Successful translated pages and questions into bytecode.", ""
     
@@ -72,8 +73,9 @@ module Kaywinnit
     page_count = 1
     
     puts "Adding pages to the database.", ""
-    page_hash.each do
-      |page_name, questions|
+    page_list.each do
+      |page_name|
+      questions = page_hash[page_name]
       print "  Adding page ##{page_count}, #{page_name}, to the database... "
       page_entry = Page.new
       page_entry.name = page_name
@@ -116,7 +118,7 @@ module Kaywinnit
     return nil
   end
   
-  def self.translate_page(parse_tree, page_hash, question_names)
+  def self.translate_page(parse_tree, page_hash, page_list, question_names)
     
     puts "  Page Name: #{parse_tree.question_name.value}" if parse_tree.question_name
     case parse_tree.name
@@ -136,12 +138,13 @@ module Kaywinnit
     when :single_branch
       questions = [translate_question(parse_tree, page_hash)]
       page_hash[questions[0].name] = questions
+      page_list << questions[0].name
       
     else
       check_for_repeating_question_names(parse_tree, question_names)
       questions = [translate_question(parse_tree, page_hash)]
       page_hash[parse_tree.question_name.value] = questions
-            
+      page_list << parse_tree.question_name.value
     end
     
     return questions        

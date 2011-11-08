@@ -49,13 +49,15 @@ module MeiMei
   
   class CreateResponsesTable < ActiveRecord::Migration
     def self.create
-      
+      load File.dirname(__FILE__) + "/../questions/question.rb"
       Question.all.each do
         |question|
         begin
-          add_column(:responses, question.question_name.to_s, :string) unless question.dummy? || question.calculation? || question.link? || question.survey_settings?
-        rescue
-          #column already exists with that name
+          no_responses = question.question_object.dummy? || question.question_object.calculation? || question.question_object.link? || question.question_object.survey_settings?
+          add_column(:responses, question.question_name.to_s, :string) unless no_responses
+          puts "  Added column #{question.question_name} (or the column already exists)" unless no_responses
+        rescue Exception => e
+          puts "  An error was caught: #{e}"
         end
       end
     end
