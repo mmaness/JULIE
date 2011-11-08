@@ -351,7 +351,7 @@ module RubyJulie
     def isValid(answer, variable_hash=nil)
       puts "Default: #{@default.inspect}, Answer: #{answer.inspect}"
       #TEMPORARY FIX, NEED TO CHANGE (need to figure out what the default answer truly is)
-      if (answer == @default.to_s && answer != nil)
+      if (@default && answer == @default.to_s && answer != nil)
         return true
       end
       
@@ -403,7 +403,7 @@ module RubyJulie
     end
     
     def isValid(answer, variable_hash=nil)
-      if (answer == @default && answer != nil)
+      if (@default && answer == @default && answer != nil)
         return true
       end
       
@@ -429,7 +429,7 @@ module RubyJulie
     end
     
     def isValid(answer, variable_hash=nil)
-      if (answer == @default && answer != nil)
+      if (@default && answer == @default && answer != nil)
         return true
       end
       
