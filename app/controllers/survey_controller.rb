@@ -315,8 +315,8 @@ class SurveyController < ApplicationController
       next_page = Page.find_by_sequence_id(session[:count]+1)
       if next_page    #Check if the next question exists
         next_question = next_page.questions[0].question_object
-        load 'survenity/tam_expr_interpreter.rb' if @question.before_calculations && next_question.before_calculations != ""
-        Tam::run_interpreter(next_question.before_calculations, @variable_hash) if @question.before_calculations && next_question.before_calculations != ""
+        load 'survenity/tam_expr_interpreter.rb' if next_question.before_calculations && next_question.before_calculations != ""
+        Tam::run_interpreter(next_question.before_calculations, @variable_hash) if next_question.before_calculations && next_question.before_calculations != ""
       end
       
       #Update the variable hash
@@ -383,7 +383,7 @@ class SurveyController < ApplicationController
     newString = oldString.to_s
     hash.each { 
       |k,v|
-      newString.gsub!(k,v)
+      newString.gsub!(k.to_s,v.to_s)
     }
     
     return newString
