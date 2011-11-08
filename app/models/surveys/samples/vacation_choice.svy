@@ -8,7 +8,7 @@ SurveySettings GeneralSettings
   
 Dummy Intro
   text "Welcome to the Vacation Choice Survey"
-  text ""
+  text "<br/><br/>"
   text "First, you will be asked a series of questions about your most recent vacation."
   calculation after
     x = 2
@@ -16,7 +16,7 @@ Dummy Intro
   
 YesNo RecentVacation
   text "Have you taken a vacation away from home within the last 12 months?"
-  text "(Debug statement: The value of x is :x)"
+  text "<br/>(Debug statement: The value of x is :(x))"
   
 MultipleBranch RecentVacationBranch
   reference RecentVacation
@@ -45,7 +45,10 @@ MultipleBranch InternationalBranch
   
 OpenEnded Country
   text "What country did you visit primarily?"
-  text "(If you visited more than one country, which country did you spend the most time at?)"
+  text "<br/>(If you visited more than one country, which country did you spend the most time at?)"
+  calculation after
+    comma = ","
+  end
   
 SingleBranch City
 
@@ -56,10 +59,14 @@ OpenEnded City
   text "What city did you visit?"
   
 TextArea TripReason
-  text "How did you decide on visiting #(Country) #(City) #(State)?"
+  text "How did you decide on visiting :(ci):(comma) :(State) :(co)?"
+  calculation before
+    co = Country    #Not really necessary just shown for example
+    ci = City
+  end
   
 SurveySettings NewSection
-  section "Section 1 of 2: Future Trip"
+  section "Section 2 of 2: Future Trip"
   
 Dummy ExpInstructions
   text "You will be given four scenarios about different vacations you could choose from."

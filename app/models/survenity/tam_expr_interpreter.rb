@@ -259,12 +259,14 @@ module Tam
   
   #Checks to see if an expression corresponds to a variable
   def self.variable?(expr)
-    return expr.name == :variable
+    return expr.name == :variable || expr.name == :constant
   end
   
   #Checks a hash of variable name-variable value pairs to see
   #if a variable has been initialized in that hash 
   def self.variable_exist?(expr, variable_hash)
+    puts "Country: #{expr.value.inspect}"
+    return variable_hash.has_key?(expr.value) if expr.name == :constant
     return variable_hash.has_key?(expr.variable_name)
   end
   
@@ -272,6 +274,7 @@ module Tam
   #variable is null.  Possible that the variable might not even
   #have a key in the variable_hash
   def self.variable_null?(expr, variable_hash)
+    return (variable_hash[expr.value] == nil) if expr.name == :constant
     return variable_hash[expr.variable_name] == nil
   end
   

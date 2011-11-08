@@ -57,7 +57,8 @@ class SurveyController < ApplicationController
     @respondent = Respondent.find_by_id(session[:ID])
     @variable = @respondent.variable
     @variable_hash = @variable.variable_hash
-        
+    puts "Variable_hash: #{@variable_hash}"
+            
     if @questionObject.survey_settings?
       session[:survey_name] = @questionObject.survey_name if @questionObject.survey_name
       session[:survey_description] = @questionObject.survey_name if @questionObject.description
@@ -312,13 +313,15 @@ class SurveyController < ApplicationController
       redirect_to :action => "results" 
     else
       #Perform pre-render calculations for the next question
-      next_page = Page.find_by_sequence_id(session[:count]+1)
+      next_page = Page.find_by_sequence_id(session[:count])
       if next_page    #Check if the next question exists
         next_question = next_page.questions[0].question_object
+        puts "Next Question, #{next_question.name}, Before Calculation: #{next_question.before_calculations.to_s}"
         load 'survenity/tam_expr_interpreter.rb' if next_question.before_calculations && next_question.before_calculations != ""
         Tam::run_interpreter(next_question.before_calculations, @variable_hash) if next_question.before_calculations && next_question.before_calculations != ""
       end
       
+      puts "#Variable Hash: #{@variable_hash}"
       #Update the variable hash
       @variable.variable_hash = @variable_hash
       @variable.save
@@ -334,13 +337,13 @@ class SurveyController < ApplicationController
       session[:count] = session[:sequence].pop
       
       question = Page.find_by_sequence_id(session[:count]).questions[0].question_object
-      if !(question.dummy? || question.calculation? || question.link?)
+      if !(question.dummy? || question.calculation? || question.link? || question.survey_settings?)
         session[:ques_count] -= 1        
       end
       
-      while question.calculation? || question.link? || question.database? do
+      while question.calculation? || question.link? || question.database? || question.survey_settings? do
         session[:count] = session[:sequence].pop
-        question = @questions.questionAt(session[:count])
+        question = Page.find_by_sequence_id(session[:count]).questions[0].question_object
       end
       
       
@@ -393,7 +396,7 @@ class SurveyController < ApplicationController
   #Given a question in survey_julie symbol notation ( :varname ) returns a new string
   #with the variables replaced with data from the variable hash
   def replaceSymbolsInString(oldString, variable_hash)
-    regex = /:[a-zA-Z]\w*/
+    regex = /:\([a-zA-Z]\w*\)/
     matches = oldString.scan(regex)
     
     hash = Hash.new
@@ -401,7 +404,7 @@ class SurveyController < ApplicationController
       |variable|
       varName = getVariableName(variable)
       if (variable_hash[varName.to_sym] == nil)
-        hash.store(variable, variable)
+        hash.store(variable, "")
       else
         hash.store(variable, variable_hash[varName.to_sym])
       end

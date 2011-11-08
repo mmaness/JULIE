@@ -18,14 +18,14 @@
 
 # Give the filepath in relation to the app/models/surveys filepath (assuming this file is in app/models/survenity)
 def parse_and_compile(survey_filepath)
-  compiler_filename = "#{File.dirname(__FILE__)}/../survenity/kaywinnit_compiler.rb"
+  compiler_filename = "#{File.dirname(__FILE__)}/survenity/kaywinnit_compiler.rb"
   load compiler_filename
   
   puts "\n\nSurvenityRuby, v0.1"
   puts ""
   puts "File path given: /app/models/surveys/#{survey_filepath.to_s}"
   
-  path = File.dirname(__FILE__) + "/../surveys/" + survey_filepath.to_s
+  path = File.dirname(__FILE__) + "/surveys/" + survey_filepath.to_s
   puts "The file was found, so parsing the input now using Citrus...\n"
   
   survey = parse_survey_file(path)
@@ -49,7 +49,7 @@ module MeiMei
   
   class CreateResponsesTable < ActiveRecord::Migration
     def self.create
-      load File.dirname(__FILE__) + "/../questions/question.rb"
+      load File.dirname(__FILE__) + "/questions/question.rb"
       Question.all.each do
         |question|
         begin
