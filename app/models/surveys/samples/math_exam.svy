@@ -1,3 +1,8 @@
 # A sample survey which is a math exam
 # Created by Michael Maness
 # November 9, 2011
+
+SurveySettings Settings
+  survey_name "Algebra Test"
+  survey_description "A short test on simple Algebra I concepts"
+  
