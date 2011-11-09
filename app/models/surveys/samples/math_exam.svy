@@ -8,7 +8,7 @@ SurveySettings Settings
   
 Dummy Instruction
   text "This is a single elimination exam on Algebra I<br/><br/>"
-  text "The goal is to complete at least 6 questions in order to pass<br/>"
+  text "The goal is to complete at least 3 questions in order to pass<br/>"
   text "If you answer a question wrong, the exam will end and you will"
   text "receive a grade.<br/><br/>"
   text "Good Luck!"
@@ -47,15 +47,45 @@ MultipleBranch Branch2
   
 Decimal Question3
   text "Convert 25 ft/s to mi/h (Note: 1 mi = 5280 ft)<br/>"
-  text "[Round to the nearest tenth]
+  text "[Round to the nearest tenth]"
   
 MultipleBranch Branch3
   reference Question3
-  branch "17.0", Question3
+  branch "17.0", Question4
   default_branch Score
+  
+MultipleChoice Question4
+  t "Solve for x: <br/><br/>"
+  t "5 / (2x) + 3 = 7 / x
+  choice "-21 / 9", 0
+  choice "-3 / 2", 1
+  choice "2 / 3", 2
+  choice "3 / 2", 3
+  calculation before
+    score = 'D'
+  end
+  
+MultipleBranch Branch4
+  reference Question4
+  branch "3 / 2", Question5
+  default_branch Score
+
+Decimal Question5
+  text "Solve for n: <br/><br/>"
+  text "log10(40) - log10(n) = 1"
+  text '<br/><br/>(Where log10(x) means "log base 10 of x"<br>'
+  text "[Round to the nearest tenth]"
+  
+MultipleBranch Branch5
+  reference Question5
+  branch "4", GradeA
+  branch "4.0", GradeA
+  default_branch Score  
+
+Calculation GradeA
+  score = 'A'
 
 Dummy Score
   text "Your score is :(score)."
-
-Calculation EndOfSurvey
-  1+1
+  
+EndSurvey
