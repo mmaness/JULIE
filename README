@@ -10,23 +10,13 @@ and Ruby programming language.
 
 
 == Release Notes
-Version 1.8.0
+Version 1.8.1
 
 The following changes were made:
 
-* JULIE updated to work with Rails 3.0.9 and Ruby 1.8.7.
-* Survenity: an external DSL is used for survey creation.
-* Surveys are stored in databases now rather than as Ruby objects.  This also means
-  that new database tables were added: Pages, Questions, and Experiments.
-* The Surveys database tables has been renamed Responses.
-* A Variables tables added which stores a hash of variables associated with a
-  respondent's session.
-* A Respondents database table has been added which will link the Responses table
-  and Variable tables to a particular respondent.
-* A new routing system is used during survey progression.
-* Updated many, but not all, code to be more consistent.  To have a unifed approach,
-  for example, question text will eventually be consistently labeled text everywhere
-  rather than text in Survenity and question in the controller.
+* Added a new sample survey, math_exam.svy.  It is a short algebra exam with branching depending
+  on right and wrong answers
+
 
 
 == Getting Started
