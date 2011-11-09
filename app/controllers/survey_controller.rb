@@ -104,15 +104,7 @@ class SurveyController < ApplicationController
       redirect_to :action => "question"
       
     elsif (@questionObject.calculation?)
-      
-      if (@questionObject.is_a?(RenameExperiment))
-        @questionObject.execute(@questions)
-      else
-        @questionObject.execute(session, @survey)
-      end
-      
-      redirect_to :action => "check", :submit_count => session[:count]
-      
+      return redirect_to :action => "check", :submit_count => session[:count]
     else
         
       @question = replaceVariablesInString(@questionObject.question, @survey)
