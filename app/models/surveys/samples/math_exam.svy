@@ -6,3 +6,56 @@ SurveySettings Settings
   survey_name "Algebra Test"
   survey_description "A short test on simple Algebra I concepts"
   
+Dummy Instruction
+  text "This is a single elimination exam on Algebra I<br/><br/>"
+  text "The goal is to complete at least 6 questions in order to pass<br/>"
+  text "If you answer a question wrong, the exam will end and you will"
+  text "receive a grade.<br/><br/>"
+  text "Good Luck!"
+  
+MultipleChoice Question1
+  text "Solve for a:"
+  text "<br/><br/>"
+  text "4 + |a| = 6"
+  choice "10", 0
+  choice "2", 1
+  choice "-2", 2
+  choice "{2, -2}", 3
+  calculation before
+    score = 'F'
+  end
+  
+MultipleBranch Branch1
+  reference Question1
+  branch "{2, -2}", Question2
+  default_branch Score
+  
+MultipleChoice Question2
+  text "What is the maximum number of solutions to a cubic equation?<br/>"
+  text "( Assume the form: ax^3 + bx^2 + c^x + d = 0 )"
+  choice "0", 0
+  choice "1", 1
+  choice "2", 2
+  choice "3", 3
+  choice "4", 4
+  choice "5", 5
+
+MultipleBranch Branch2
+  reference Question2
+  branch "{2, -2}", Question3
+  default_branch Score
+  
+Decimal Question3
+  text "Convert 25 ft/s to mi/h (Note: 1 mi = 5280 ft)<br/>"
+  text "[Round to the nearest tenth]
+  
+MultipleBranch Branch3
+  reference Question3
+  branch "17.0", Question3
+  default_branch Score
+
+Dummy Score
+  text "Your score is :(score)."
+
+Calculation EndOfSurvey
+  1+1
