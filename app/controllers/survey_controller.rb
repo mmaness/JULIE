@@ -61,7 +61,7 @@ class SurveyController < ApplicationController
             
     if @questionObject.survey_settings?
       session[:survey_name] = @questionObject.survey_name if @questionObject.survey_name
-      session[:survey_description] = @questionObject.survey_name if @questionObject.description
+      session[:survey_description] = @questionObject.description if @questionObject.description
       session[:section] = @questionObject.section if @questionObject.section
       
       return redirect_to :action => "check", :submit_count => session[:count]
