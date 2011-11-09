@@ -15,7 +15,7 @@ Version 1.8.0
 This is the first version released publicly online.  Generally everything is new.
 The most important changes are the following:
 
-* JULIE updated to work with Rails 3.1.0 and Ruby 1.9.3.
+* JULIE updated to work with Rails 3.0.9 and Ruby 1.8.7.
 * Survenity: an external DSL is used for survey creation.
 * Surveys are stored in databases now rather than as Ruby objects.  This also means
   that new database tables were added: Pages, Questions, and Experiments.
