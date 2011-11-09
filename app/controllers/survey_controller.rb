@@ -360,7 +360,7 @@ class SurveyController < ApplicationController
   end
 
   
-  
+  #DEPRECATED METHOD... Should not use it
   #Given a question in survey_julie variable notation ( #(____) ) returns a new string
   #with the variables replaced with data from the database
   #Also takes the database model (survey)
