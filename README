@@ -37,8 +37,8 @@ The most important changes are the following:
 To get started with JULIE, you need the following:
 
 * Operating System supported by Ruby (Windows, Mac OS/X, Linux)
-* Ruby 1.9.3-p0
-* Rails 3.0.10 or higher
+* Ruby 1.8.7
+* Rails 3.0.9 or higher
 * SQLite 3.5.6
 * Bundler 1.0.21
 
@@ -51,14 +51,24 @@ Using a command line tool, go to the JULIE-180 directory.  To install the depend
 following command:
   bundle install
 
+See if json has caused an error, type command:
+  rails –v
+
+If error seen, open up Explorer and go to C:\RailsInstaller\Ruby1.8.7\lib\ruby\gems\1.8\specifications.
+Open the file “json-1.6.1.gemspec” in a text editor and replace the line:
+  s.date = %q{2011-09-18 00:00:00.000000000Z}
+with this line:
+  s.date = %q{2011-08-31}
+Then save the file. If successful, then rerunning the command "rails -v" should show no error messages.
+
 With the dependencies installed, create the development and production databases.  First change 
-directories to /JULIE-180/db/ then use the following commands:
-  sqlite3 development.sqlite3 ""
-  sqlite3 production.sqlite3 ""
+directories to /JULIE-180/db/ then create copies of the blank database template:
+  cp blank_database_template.db development.sqlite3
+  cp blank_database_template.db production.sqlite3
   
 With the databases in place, populate them with tables by using Rails migrations.  Use the 
 following command:
-  bundle exec rake db:migrate
+  rake db:migrate
 
 You should be set to begin developing surveys with JULIE.  To start the Rails server, use the following command:
   rails server
