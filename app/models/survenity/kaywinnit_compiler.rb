@@ -447,6 +447,8 @@ module Kaywinnit
   
   # A method for parsing bounds
   def self.bounds_trait(question, parse_tree)
+    return if parse_tree.bounds.size == 0    #Check if any bounds are associated with this question
+    
     question.lower_bound = parse_tree.bounds[0].value unless parse_tree.bounds[0].null?
     question.upper_bound = parse_tree.bounds[1].value unless parse_tree.bounds[1] == nil || parse_tree.bounds[1].null?
     

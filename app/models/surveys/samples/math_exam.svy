@@ -52,7 +52,7 @@ Decimal Question3
 MultipleBranch Branch3
   reference Question3
   branch "17.0", Question4
-  default_branch Score
+  default_branch Score  
   
 MultipleChoice Question4
   t "Solve for x: <br/><br/>"

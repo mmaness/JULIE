@@ -271,11 +271,11 @@ grammar SurvenityGrammar
 	
 	rule branch
 		("branch" mandatory_space response:(string | variable | number) "," 
-		optional_space constant) <Branch>
+		optional_space constant optional_space) <Branch>
 	end
 	
 	rule default_branch
-		("default_branch" mandatory_space constant) <DefaultBranch>
+		("default_branch" mandatory_space constant optional_space) <DefaultBranch>
 	end
 	
 	rule experiment

@@ -266,11 +266,11 @@ grammar Survenity
 	
 	rule branch
 		("branch" mandatory_space (string / variable / number) "," 
-		optional_space constant) 
+		optional_space constant optional_space) 
 	end
 	
 	rule default_branch
-		("default_branch" mandatory_space constant) 
+		("default_branch" mandatory_space constant optional_space) 
 	end
 	
 	rule experiment

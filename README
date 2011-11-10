@@ -14,9 +14,14 @@ Version 1.8.1
 
 The following changes were made:
 
-* Added a new sample survey, math_exam.svy.  It is a short algebra exam with branching depending
-  on right and wrong answers
-
+* Added a new sample survey, math_exam.svy.  It is a short algebra exam with branching 
+  depending on right and wrong answers
+* Citrus parser no longer ends all ruby execution if an error is thrown. It will 
+  throw an exception instead.
+* Survenity grammar changed so that the traits "branch" and "default_branch" can have 
+  whitespace after the question name.
+* Number-Input Questions should compile now if they have no bounds.
+  (Bugfix for Kaywinnit Compiler)
 
 
 == Getting Started
