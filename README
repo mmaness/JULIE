@@ -22,7 +22,7 @@ The following changes were made:
   whitespace after the question name.
 * Number-Input Questions should compile now if they have no bounds.
   (Bugfix for Kaywinnit Compiler)
-
+* Assigning single-quoted strings should now work. (Bugfix for Tam Expression Interpreter)
 
 == Getting Started
 

@@ -98,6 +98,8 @@ module Tam
       end
     end
     
+    puts "value: #{value}"
+    
     while match_list.size > 0
       current_expr = match_list.pop    #current expression
       
@@ -167,6 +169,7 @@ module Tam
   # helper method which determines the type of a literal
   # inside_array parameter is there to handle cases when an array is created inside another array
   def self.convert_literal(literal_expression, match_list, inside_array=false)
+    puts "literal_expression: #{literal_expression.name.inspect}, #{literal_expression.value}"
     case literal_expression.name
           
     when :integer
@@ -177,7 +180,7 @@ module Tam
       value = literal_expression.value
     when :double_quote_string
       value = literal_expression.value
-    when :single_quote_sting
+    when :single_quote_string
       value = literal_expression.value
     when :array_literal
       match_list.pop if inside_array
