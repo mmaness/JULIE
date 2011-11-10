@@ -56,7 +56,7 @@ MultipleBranch Branch3
   
 MultipleChoice Question4
   t "Solve for x: <br/><br/>"
-  t "5 / (2x) + 3 = 7 / x
+  t "5 / (2x) + 3 = 7 / x"
   choice "-21 / 9", 0
   choice "-3 / 2", 1
   choice "2 / 3", 2
@@ -80,7 +80,7 @@ MultipleBranch Branch5
   reference Question5
   branch "4", GradeA
   branch "4.0", GradeA
-  default_branch Score  
+  default_branch Score
 
 Calculation GradeA
   score = 'A'

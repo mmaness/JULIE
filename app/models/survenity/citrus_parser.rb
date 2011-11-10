@@ -63,8 +63,7 @@ def parse_survey_file(file_path)
   rescue Citrus::ParseError => error
     Mal::ErrorHandler.parse_with_treetop(file_path)
     puts "\n===============\n\nCitrus Error Output:"
-    puts error
-    exit    
+    raise error
   end
   
   #Place matches into different categories depending on whether the block corresponds to a page/question or choice experiment
