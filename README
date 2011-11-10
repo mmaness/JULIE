@@ -117,8 +117,16 @@ app/controllers
   ApplicationController which itself descends from ActionController::Base.
 
 app/models
-  Holds models that should be named like post.rb. Models descend from
-  ActiveRecord::Base by default.
+  Holds models that link JULIE to the databases.
+  
+app/model/survey
+  Survey files are stored here.
+
+app/model/survenity
+  Contains the Survenity parser, compiler, and interpreter.
+
+app/model/questions
+  Holds ruby files representing questions and experiments.
 
 app/views
   Holds the template files for the view that should be named like
@@ -131,6 +139,10 @@ app/views/layouts
   using the <tt>layout :default</tt> and create a file named default.html.erb.
   Inside default.html.erb, call <% yield %> to render the view using this
   layout.
+  
+app/views/survey
+  Holds the html and embedded ruby code that represents the visual display of
+  surveys.
 
 app/helpers
   Holds view helpers that should be named like weblogs_helper.rb. These are
