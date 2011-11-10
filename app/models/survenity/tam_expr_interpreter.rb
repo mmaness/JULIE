@@ -169,7 +169,6 @@ module Tam
   # helper method which determines the type of a literal
   # inside_array parameter is there to handle cases when an array is created inside another array
   def self.convert_literal(literal_expression, match_list, inside_array=false)
-    puts "literal_expression: #{literal_expression.name.inspect}, #{literal_expression.value}"
     case literal_expression.name
           
     when :integer

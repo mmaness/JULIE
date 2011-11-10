@@ -23,6 +23,8 @@ The following changes were made:
 * Number-Input Questions should compile now if they have no bounds.
   (Bugfix for Kaywinnit Compiler)
 * Assigning single-quoted strings should now work. (Bugfix for Tam Expression Interpreter)
+* Bugfix for Number-Input Questions where an error would be thrown when answering a
+  Number-Input Question with no bounds.
 
 == Getting Started
 

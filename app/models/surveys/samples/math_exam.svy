@@ -42,7 +42,7 @@ MultipleChoice Question2
 
 MultipleBranch Branch2
   reference Question2
-  branch "{2, -2}", Question3
+  branch "3", Question3
   default_branch Score
   
 Decimal Question3
@@ -52,6 +52,7 @@ Decimal Question3
 MultipleBranch Branch3
   reference Question3
   branch "17.0", Question4
+  branch "17", Question4
   default_branch Score  
   
 MultipleChoice Question4
