@@ -63,7 +63,7 @@ MultipleChoice Question4
   choice "2 / 3", 2
   choice "3 / 2", 3
   calculation before
-    score = 'D'
+    score = 'C'
   end
   
 MultipleBranch Branch4
@@ -76,6 +76,9 @@ Decimal Question5
   text "log10(40) - log10(n) = 1"
   text '<br/><br/>(Where log10(x) means "log base 10 of x"<br>'
   text "[Round to the nearest tenth]"
+  calculation before
+    score = 'B'
+  end
   
 MultipleBranch Branch5
   reference Question5

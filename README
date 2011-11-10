@@ -20,11 +20,17 @@ The following changes were made:
   throw an exception instead.
 * Survenity grammar changed so that the traits "branch" and "default_branch" can have 
   whitespace after the question name.
+
+The following bugs were found and fixed:
+
 * Number-Input Questions should compile now if they have no bounds.
-  (Bugfix for Kaywinnit Compiler)
-* Assigning single-quoted strings should now work. (Bugfix for Tam Expression Interpreter)
+  (Bugfix: Kaywinnit Compiler)
+* Assigning single-quoted strings should now work. (Bugfix: Tam Expression Interpreter)
 * Bugfix for Number-Input Questions where an error would be thrown when answering a
   Number-Input Question with no bounds.
+* "Before calculations" for a question that is rendered after a Multiple Branch or 
+  Single Branch should now perform correctly. (Bugfix: JULIE Controller)
+ 
 
 == Getting Started
 
