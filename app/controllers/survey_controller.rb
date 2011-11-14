@@ -262,7 +262,6 @@ class SurveyController < ApplicationController
     end
     
     if @question.class == RubyJulie::TimeOfDayQuestion
-      #puts @question.isValid([params[:hour], params[:minute]])
       params[:answer] = ([params[:hour], params[:minute]])
       params[:answer] = (params[:hour].to_i * 60 + params[:minute].to_i) % 720
       if params[:period] == "PM"
@@ -271,7 +270,7 @@ class SurveyController < ApplicationController
       params[:answer] = params[:answer].to_s
     end    
     
-    if(@question.isValid(params[:answer]))
+    if @question.isValid(params[:answer], @variable_hash)
     
       session[:sequence].push(session[:count])  # Adds the question just answered to the sequence
       
@@ -296,7 +295,11 @@ class SurveyController < ApplicationController
         end
         
         Response.update(session[:ID], { @question.name => response})
+        
+        
         @variable_hash[@question.name.to_sym] = response
+        @variable_hash[@question.name.to_sym] = response.to_i if @question.answer_integer? && response != @question.default_answer
+        @variable_hash[@question.name.to_sym] = response.to_f if @question.answer_decimal? && response != @question.default_answer
         
         session[:ques_count] += 1
       end

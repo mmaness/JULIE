@@ -14,22 +14,31 @@ Version 1.8.1
 
 The following changes were made:
 
-* Added a new sample survey, math_exam.svy.  It is a short algebra exam with branching 
+* Added a new sample survey, math_exam.svy.  It is a short Algebra exam with branching 
   depending on right and wrong answers
 * Citrus parser no longer ends all ruby execution if an error is thrown. It will 
   throw an exception instead.
 * Survenity grammar changed so that the traits "branch" and "default_branch" can have 
   whitespace after the question name.
+* Modified all question objects such that their isValid() method requires an answer and the
+  variable hash.
 
 The following bugs were found and fixed:
 
 * Number-Input Questions should compile now if they have no bounds.
   (Bugfix: Kaywinnit Compiler)
 * Assigning single-quoted strings should now work. (Bugfix: Tam Expression Interpreter)
-* Bugfix for Number-Input Questions where an error would be thrown when answering a
-  Number-Input Question with no bounds.
+* for Number-Input Questions where an error would be thrown when answering a
+  Number-Input Question with no bounds. (Bugfix: Number-Input Questions)
 * "Before calculations" for a question that is rendered after a Multiple Branch or 
   Single Branch should now perform correctly. (Bugfix: JULIE Controller)
+* For Number-Input Questions, bounds should now not throw errors when performing validation
+  tests, isValid() method. (Bugfix: Number-Input Questions)
+* For Decimal-Input and Currency Questions, all bounds are now converted to floats correctly. 
+  (Bugfix: Decimal-Input Questions)
+* The variable hash should now store integer and decimal values from Number-Input Questions
+  correctly as Ruby FixNum and Float objects respectively. (Bugfix: Variable Model/Table)
+ 
  
 
 == Getting Started

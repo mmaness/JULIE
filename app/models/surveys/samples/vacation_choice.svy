@@ -23,17 +23,28 @@ MultipleBranch RecentVacationBranch
   branch "Yes", TripLength
   default_branch EndOfSurvey
   
-Integer TripLength
+Decimal TripLength
   text "In terms of days, how long was your trip?"
   bounds 0, 365
-  
+    
 MultipleChoice Enjoyment
-  text "How much did you enjoy your trip?"
+  text "How much did you enjoyed your trip?"
   choice "Very much"
   choice "Somewhat"
   choice "Indifferent"
   choice "Not much"
   choice "Not at all"
+  
+MultipleChoice Enjoyment_Long
+  text "If you could have stayed for :(long_stay) days instead, how much do you think you would have enjoyed your trip?"
+  choice "Very much"
+  choice "Somewhat"
+  choice "Indifferent"
+  choice "Not much"
+  choice "Not at all"
+  calculation before
+    long_stay = TripLength + 3.5
+  end
   
 YesNo International
   text "For your most recent trip, did you leave the country?"
