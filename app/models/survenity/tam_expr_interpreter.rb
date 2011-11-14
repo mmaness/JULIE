@@ -98,6 +98,8 @@ module Tam
       end
     end
     
+    puts "value: #{value}"
+    
     while match_list.size > 0
       current_expr = match_list.pop    #current expression
       
@@ -177,7 +179,7 @@ module Tam
       value = literal_expression.value
     when :double_quote_string
       value = literal_expression.value
-    when :single_quote_sting
+    when :single_quote_string
       value = literal_expression.value
     when :array_literal
       match_list.pop if inside_array

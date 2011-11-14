@@ -101,10 +101,24 @@ class SurveyController < ApplicationController
       elsif @questionObject.class == RubyJulie::SingleLink
         session[:count] = Page.find_by_id(Question.find_by_question_name(@questionObject.nextQuestion()).page_id).sequence_id
       end
-      redirect_to :action => "question"
+      
+      #Perform pre-render calculations for the next question
+      next_page = Page.find_by_sequence_id(session[:count])
+      if next_page    #Check if the next question exists
+        next_question = next_page.questions[0].question_object
+        puts "Next Question, #{next_question.name}, Before Calculation: #{next_question.before_calculations.to_s}"
+        load 'survenity/tam_expr_interpreter.rb' if next_question.before_calculations && next_question.before_calculations != ""
+        Tam::run_interpreter(next_question.before_calculations, @variable_hash) if next_question.before_calculations && next_question.before_calculations != ""
+        
+        @variable.variable_hash = @variable_hash
+        @variable.save
+      end
+      
+      return redirect_to :action => "question"
       
     elsif (@questionObject.calculation?)
       return redirect_to :action => "check", :submit_count => session[:count]
+      
     else
         
       @question = replaceVariablesInString(@questionObject.question, @survey)
@@ -125,7 +139,7 @@ class SurveyController < ApplicationController
     
     if @count == 1 && @count_actual == 1
       @back = false
-    elsif @coutn == 1 && (Page.first.questions[0].question_object.calculation? || Page.first.questions[0].question_object.survey_settings?)
+    elsif @count == 1 && (Page.first.questions[0].question_object.calculation? || Page.first.questions[0].question_object.survey_settings?)
       @back = false
     else
       @back = true
@@ -248,7 +262,6 @@ class SurveyController < ApplicationController
     end
     
     if @question.class == RubyJulie::TimeOfDayQuestion
-      #puts @question.isValid([params[:hour], params[:minute]])
       params[:answer] = ([params[:hour], params[:minute]])
       params[:answer] = (params[:hour].to_i * 60 + params[:minute].to_i) % 720
       if params[:period] == "PM"
@@ -257,7 +270,7 @@ class SurveyController < ApplicationController
       params[:answer] = params[:answer].to_s
     end    
     
-    if(@question.isValid(params[:answer]))
+    if @question.isValid(params[:answer], @variable_hash)
     
       session[:sequence].push(session[:count])  # Adds the question just answered to the sequence
       
@@ -282,7 +295,11 @@ class SurveyController < ApplicationController
         end
         
         Response.update(session[:ID], { @question.name => response})
+        
+        
         @variable_hash[@question.name.to_sym] = response
+        @variable_hash[@question.name.to_sym] = response.to_i if @question.answer_integer? && response != @question.default_answer
+        @variable_hash[@question.name.to_sym] = response.to_f if @question.answer_decimal? && response != @question.default_answer
         
         session[:ques_count] += 1
       end
@@ -360,7 +377,7 @@ class SurveyController < ApplicationController
   end
 
   
-  
+  #DEPRECATED METHOD... Should not use it
   #Given a question in survey_julie variable notation ( #(____) ) returns a new string
   #with the variables replaced with data from the database
   #Also takes the database model (survey)

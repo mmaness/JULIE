@@ -37,7 +37,7 @@ module RubyJulie
     # Returns true is the response given is a valid response to the question
     # Raises an exception by default... 
     # Each child should provide a correct implementation
-    def isValid(answer)
+    def isValid(answer, variable_hash)
       if (answer == nil || answer == '')
         @invalidInput = 'An answer was not provided'
         return false
@@ -132,6 +132,16 @@ module RubyJulie
       return false
     end
     
+    # Used to verify if answers to this question correspond to integers
+    def answer_integer?
+      return false
+    end
+    
+    # Used to verify if answers to this question correspond to decimals
+    def answer_decimal?
+      return false
+    end
+    
   end
   
   class StaticChoice < Question
@@ -180,8 +190,8 @@ module RubyJulie
     end
   
     # Checks if the choice is within the index range (zero-based) of the question
-    def isValid(index)
-      if (super(index) == false)
+    def isValid(index, variable_hash)
+      if (super == false)
        return false
       end
       if index == ""
@@ -218,14 +228,14 @@ module RubyJulie
   class MultipleAnswerQuestion < StaticChoice
     
     # Checks whether an array of indices are valid (zero-based)
-    def isValid(index)
+    def isValid(index, variable_hash)
       if index == nil
         return true
       end
       
       index.each {
         |choice|
-        if super.isValid(index) == false
+        if super == false
           return false
         end
       }
@@ -273,7 +283,7 @@ module RubyJulie
       @invalidInput = "An answer was not provided"
     end
     
-    def isValid(answer)
+    def isValid(answer, variable_hash)
       # An answer must be provided
       if (answer == "" || answer == nil)
         return false
@@ -310,7 +320,7 @@ module RubyJulie
       end
     end
         
-    def isValid(answer)
+    def isValid(answer, variable_hash)
       if @no_answer
         return true
       else
@@ -348,7 +358,7 @@ module RubyJulie
       @upper_bound = upperBound
     end
     
-    def isValid(answer, variable_hash=nil)
+    def isValid(answer, variable_hash)
       puts "Default: #{@default.inspect}, Answer: #{answer.inspect}"
       #TEMPORARY FIX, NEED TO CHANGE (need to figure out what the default answer truly is)
       if (@default && answer == @default.to_s && answer != nil)
@@ -367,12 +377,16 @@ module RubyJulie
       @lower_bound = @lower_bound.to_i if @lower_bound.is_a?(String)
       
       
-      if (answer.to_i > @upper_bound || answer.to_i < @lower_bound)
+      if @lower_bound && (answer.to_i > @upper_bound || answer.to_i < @lower_bound)
         @invalidInput = "Your answer must be between " + @lower_bound.to_s + " and " + @upper_bound.to_s + "."
         return false
       end
       
-      return super(answer)
+      return super
+    end
+    
+    def answer_integer?
+      return true
     end
     
   end
@@ -402,7 +416,7 @@ module RubyJulie
       
     end
     
-    def isValid(answer, variable_hash=nil)
+    def isValid(answer, variable_hash)
       if (@default && answer == @default && answer != nil)
         return true
       end
@@ -412,12 +426,22 @@ module RubyJulie
         return false
       end
       
-      if (answer.to_f > @upper_bound || answer.to_f < @lower_bound)
+      @upper_bound = variable_hash[@upper_bound] if @upper_bound.is_a?(Symbol)
+      @lower_bound = variable_hash[@lower_bound] if @lower_bound.is_a?(Symbol)
+      
+      @upper_bound = @upper_bound.to_f if @upper_bound.is_a?(String)
+      @lower_bound = @lower_bound.to_f if @lower_bound.is_a?(String)
+      
+      if @lower_bound && (answer.to_f > @upper_bound || answer.to_f < @lower_bound)
         @invalidInput = "Your answer must be between " + @lower_bound.to_s + " and " + @upper_bound.to_s + "."
         return false
       end
       
-      return super(answer)
+      return super
+    end
+    
+    def answer_decimal?
+      return true
     end
     
   end
@@ -428,7 +452,7 @@ module RubyJulie
       super(name, question)
     end
     
-    def isValid(answer, variable_hash=nil)
+    def isValid(answer, variable_hash)
       if (@default && answer == @default && answer != nil)
         return true
       end
@@ -438,7 +462,11 @@ module RubyJulie
         return false
       end
       
-      return super(answer)
+      return super
+    end
+    
+    def answer_decimal?
+      return true
     end
     
   end
@@ -485,7 +513,7 @@ module RubyJulie
   end
   
   # Time of Day works with time in minutes after midnight
-  class TimeOfDayQuestion < Question
+  class TimeOfDayQuestion < IntegerInputQuestion
     
     def initialize(name, question = "", lowerBound = 0, upperBound = 1440)
       if lowerBound.class != Fixnum || upperBound.class != Fixnum
@@ -503,22 +531,12 @@ module RubyJulie
     
     # Answer should be an array of size 2 with the 0-th entry representing hours and
     # the next entry representing minutes
-    def isValid(answer)
+    def isValid(answer, variable_hash)
       if (answer == @default && answer != nil)
         return true
       end
       
-      if (answer == "" || answer == nil || answer !~ /^-?\s*\d+\s*$/)
-        @invalidInput = "Your answer must be in minutes after midnight."
-        return false
-      end
-      
-      if (answer.to_i > @upperBound || answer.to_i < @lowerBound)
-        @invalidInput = "Your answer must be between " + lowerBound.to_s + " and " + upperBound.to_s + "."
-        return false
-      end
-      
-      return true
+      return super
     end
     
     #time1 and time2 should be entries containing hour, minutes in 24h time (midnight is 0h00)
@@ -534,6 +552,10 @@ module RubyJulie
       end
       
       return difference
+    end
+    
+    def answer_integer?
+      return true
     end
     
   end
