@@ -15,8 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-
-grammar Survenity
+grammar SurvenityGrammar
 
 	########################################
 	# File Reading
@@ -25,7 +24,7 @@ grammar Survenity
 	rule file
 		((optional_space (question_type / choice_experiment / comment_line / load_statement))*
 		(optional_space end_survey (end_of_file))?) 
-		 
+		<SurveyFile> 
 	end
 	
 	rule comment_line
@@ -33,7 +32,7 @@ grammar Survenity
 	end
 	
 	rule load_statement
-		("load" mandatory_space string optional_space comment? end_of_line) 
+		("load" mandatory_space string optional_space comment? end_of_line) <LoadFile>
 	end
 	
 	rule end_survey
@@ -71,210 +70,217 @@ grammar Survenity
 	rule multiple_questions
 		("MultipleQuestions" mandatory_space constant optional_space comment? end_of_line
 		(optional_sapce question_type)+
-		optional_space "end" optional_space comment? end_of_line) 
+		optional_space "end" optional_space comment? end_of_line) <MultipleQuestions>
 	end
 	
 	rule question_block_options
-		question_text /
+		(question_text /
 		add_default_answer /
 		calculation /
-		no_skip
+		no_skip) <Trait>
 	end
 	
 	rule scenario_block_options
-		(experiment / pre_table_text / post_table_text / choice / add_default_answer / calculation / no_skip) 
+		(experiment /
+		pre_table_text /
+		post_table_text /
+		choice /
+		add_default_answer /
+		calculation /
+		no_skip) <Trait>
 	end
 	
 	rule question_block
 		(optional_space ((comment? end_of_line) / (question_block_options comment? (end_of_line))))
-		
+		<Trait>
 	end
 	
 	rule scenario_block
 		(optional_space ((comment? end_of_line) / (scenario_block_options comment? (end_of_line))))
-		
+		<Trait>
 	end
 	
 	rule multiple_choice_block
 		(optional_space ((comment? end_of_line) / ((choice / question_block_options) comment? (end_of_line))))
-		
+		<Trait>
 	end
 	
 	rule multiple_answer_block
 		(multiple_choice_block) 
-		
+		<Trait>
 	end
 	
 	rule number_input_block
 		(optional_space ((comment? end_of_line) / ((bounds / question_block_options) comment? (end_of_line))))
-		
+		<Trait>
 	end
 	
 	rule text_area_block
 		(optional_space ((comment? end_of_line) / ((text_area_size / question_block_options) comment? (end_of_line))))
-		
+		<Trait>
 	end
 	
 	rule setup_block
 		(optional_space ((comment? end_of_line) / (( survey_name / survey_description / section ) comment? (end_of_line))))
-		
+		<Trait>
 	end
 	
 	rule branch_block
 		(optional_space ((comment? end_of_line) / ((branch / default_branch) comment? (end_of_line))))
-		
+		<Trait>
 	end
 	
 	rule survey_setup
 		("SurveySettings" question_name optional_space comment? end_of_line
-		(setup_block+)) 
+		(setup_block+)) <SurveySetup>
 	end
 	
 	rule multiple_choice
 		("MultipleChoice" question_name end_of_line
-		(multiple_choice_block+)) 
+		(multiple_choice_block+)) <MultipleChoiceQuestion>
 	end
 	
 	rule multiple_answer
 		("MultipleAnswer" question_name end_of_line
-		(multiple_answer_block+)) 
+		(multiple_answer_block+)) <MultipleAnswerQuestion>
 	end
 	
 	rule yes_no
 		("YesNo" question_name end_of_line
-		(question_block+)) 
+		(question_block+)) <YesNoQuestion>
 	end
 	
 	rule dummy
 		("Dummy" question_name end_of_line
-		(question_block+)) 
+		(question_block+)) <DummyQuestion>
 	end
 	
 	rule true_false
 		("TrueFalse" question_name end_of_line
-		(question_block+)) 
+		(question_block+)) <TrueFalseQuestion>
 	end
 	
 	rule open_ended
 		("OpenEnded" question_name end_of_line
-		(question_block+)) 
+		(question_block+)) <OpenEndedQuestion>
 	end
 	
 	rule text_area
 		("TextArea" question_name end_of_line
-		(text_area_block+)) 
+		(text_area_block+)) <TextAreaQuestion>
 	end
 	
 	rule integer_question
 		("Integer" question_name end_of_line
-		(number_input_block+)) 
+		(number_input_block+)) <IntegerQuestion>
 	end
 	
 	rule decimal_question
 		("Decimal" question_name end_of_line
-		(number_input_block+)) 
+		(number_input_block+)) <DecimalQuestion>
 	end
 	
 	rule currency
 		("Currency" question_name end_of_line
-		(number_input_block+)) 
+		(number_input_block+)) <CurrencyQuestion>
 	end
 	
 	rule time_of_day
 		("TimeOfDay" question_name end_of_line
-		(number_input_block+)) 
+		(number_input_block+)) <TimeOfDayQuestion>
 	end
 	
 	rule scenario
 		("Scenario" question_name end_of_line
-		(scenario_block+)) 
+		(scenario_block+)) <ScenarioQuestion>
 	end
 	
 	rule multiple_branch
 		("MultipleBranch" question_name end_of_line
 		optional_space reference end_of_line
-		(branch_block+)) 
+		(branch_block+)) <MultipleBranch>
 	end
 	
 	rule single_branch
-		("SingleBranch" question_name end_of_line) 
+		("SingleBranch" question_name end_of_line) <SingleBranch>
  	end
 	
 	rule calculation_question
 		("Calculation" question_name end_of_line
-		((statement / (optional_space comment?)) end_of_line)+) 
+		((statement / (optional_space comment?)) end_of_line)*
+		optional_space end_keyword optional_space end_of_line) <CalculationQuestion>
 	end
 	
 	rule question_name
-		(mandatory_space constant optional_space comment?) 
+		(mandatory_space constant optional_space comment?) <QuestionName>
 	end
 	
 	rule question_text
-		(("text" / "t") mandatory_space string) 
+		(("text" / "t") mandatory_space string) <QuestionText>
 	end
 	
 	rule pre_table_text
-		("pre_table_text" mandatory_space string) 
+		("pre_table_text" mandatory_space string) <PreTableText>
 	end
 	
 	rule post_table_text
-		("post_table_text" mandatory_space string) 
+		("post_table_text" mandatory_space string) <PostTableText>
 	end
 	
 	rule calculation
 		("calculation" mandatory_space ("before" / "after") optional_space end_of_line
 		((statement / (optional_space comment?)) end_of_line)*
-		optional_space "end" optional_space comment?) 
+		optional_space "end" optional_space comment?) <Calculation>
 	end
 	
 	rule section
-		("section" mandatory_space string) 
+		("section" mandatory_space string) <Section>
 	end
 	
 	rule survey_name
-		("survey_name" mandatory_space string) 
+		("survey_name" mandatory_space string) <SurveyName>
 	end
 	
 	rule survey_description
-		("survey_description" mandatory_space string) 
+		("survey_description" mandatory_space string) <SurveyDescription>
 	end
 	
 	rule bounds
-		("bounds" mandatory_space (number / variable / null_keyword) ("," optional_space (number / variable / null_keyword))?) 
+		("bounds" mandatory_space (number / variable / null_keyword) ("," optional_space (number / variable / null_keyword))?) <Bounds>
 	end
 	
 	rule add_default_answer
-		("add_default_answer" mandatory_space (string / number / variable) ("," optional_space (string / variable))?) 
+		("add_default_answer" mandatory_space (string / number / variable) ("," optional_space (string / variable))?) <AddDefaultAnswer>
 	end
 	
 	rule no_skip
-		("no_skip" optional_space) 
+		("no_skip" optional_space) <NoSkip>
 	end
 	
 	rule choice
 		("choice" mandatory_space (string / number / variable) 
-		(',' optional_space (number / variable))?) 
+		(',' optional_space (number / variable))?) <Choice>
 	end
 	
 	rule text_area_size
-		("text_area_size" mandatory_space integer ("," optional_space integer)?) 
+		("text_area_size" mandatory_space integer ("," optional_space integer)?) <TextAreaSize>
 	end
 	
 	rule reference
-		("reference" question_name) 
+		("reference" question_name) <Reference>
 	end
 	
 	rule branch
 		("branch" mandatory_space (string / variable / number) "," 
-		optional_space constant optional_space) 
+		optional_space constant optional_space) <Branch>
 	end
 	
 	rule default_branch
-		("default_branch" mandatory_space constant optional_space) 
+		("default_branch" mandatory_space constant optional_space) <DefaultBranch>
 	end
 	
 	rule experiment
-		("experiment" question_name) 
+		("experiment" question_name) <ExperimentReference>
 	end
 	
 	
@@ -285,12 +291,12 @@ grammar Survenity
 	
 	rule choice_experiment
 		(("ChoiceExperiment" mandatory_space constant optional_space comment?) end_of_line
-		(experiment_block+)) 
+		(experiment_block+)) <ChoiceExperiment>
 	end
 	
 	rule experiment_block
 		(optional_space ((comment? end_of_line) / ((experiment_traits))))
-		
+		<Trait>
 	end
 	
 	rule experiment_traits
@@ -299,49 +305,49 @@ grammar Survenity
 		alternative /
 		choice /
 		attribute /
-		add_design) 
+		add_design) <Trait>
 	end
 	
 	rule attribute_label
-		optional_space ("attribute_label" mandatory_space (string / variable) optional_space comment? end_of_line) 
+		optional_space ("attribute_label" mandatory_space (string / variable) optional_space comment? end_of_line) <AttributeLabel>
 	end
 	
 	rule attribute
 		("attribute" mandatory_space constant optional_space comment? end_of_line
-		(add_level / attribute_label)+) 
+		(add_level / attribute_label)+) <AddAttribute>
 	end
 	
 	rule add_level
 		(optional_space ((comment? end_of_line) / 
 		("add_level" mandatory_space integer (comma / mandatory_space) level_value comment? end_of_line))
-		level_text+) 
+		level_text+) <AddLevel>
 	end
 	
 	# Ways in which a level can be represented as a value
 	rule level_value
-		((number / variable / constant / string) optional_space) 
+		((number / variable / constant / string) optional_space) <LevelValue>
 	end
 	
 	rule level_text
-		(optional_space ((comment? end_of_line) / (string optional_space comment? end_of_line))) 
+		(optional_space ((comment? end_of_line) / (string optional_space comment? end_of_line))) <LevelText>
 	end
 	
 	rule alternative
 		("alternative" mandatory_space (string / variable) optional_space comment? end_of_line
-		set_levels+) 
+		set_levels+) <Alternative>
 	end
 	
 	rule set_levels
 		(optional_space ((comment? end_of_line) /
-		("set_levels_for" mandatory_space constant optional_space array_insert integer_array optional_space comment? end_of_line) ))  
+		("set_levels_for" mandatory_space constant optional_space array_insert integer_array optional_space comment? end_of_line) )) <SetLevels> 
 	end
 	
 	rule add_design
-		(optional_space "add_design" optional_space array_insert integer_array optional_space comment? end_of_line)  
+		(optional_space "add_design" optional_space array_insert integer_array optional_space comment? end_of_line) <AddDesign> 
 	end
 	
 	rule integer_array
-		( '[' optional_space integer (mandatory_space integer)* optional_space ']' optional_space ) 
+		( '[' optional_space integer (mandatory_space integer)* optional_space ']' optional_space ) <IntegerArray>
 	end
 	
 	########################################
@@ -349,11 +355,11 @@ grammar Survenity
 	########################################
 
 	rule statement
-		( optional_space (assignment / expression) comment? )  
+		( optional_space (conditional_statement / assignment / expression) comment? ) <Statement> 
 	end
 	
 	rule assignment
-		( variable optional_space equal expression ) 
+		( variable optional_space equal expression ) <Assignment>
 	end
 	
 	rule comment
@@ -373,11 +379,11 @@ grammar Survenity
 	end
 	
 	rule double_quote_string
-		( '"' (([^"\\] / "\\" . )*) '"' ) 
+		( '"' (([^"\\] / "\\" . )*) '"' ) <DoubleQuoteString>
 	end
 	
 	rule single_quote_string
-		( "'" ((!"'" .)*) "'" ) 
+		( "'" ((!"'" .)*) "'" ) <SingleQuoteString>
 	end
 	
 	########################################
@@ -385,7 +391,7 @@ grammar Survenity
 	########################################
 	
 	rule array
-		( '[' optional_space array_entry (mandatory_space array_entry)* optional_space ']' optional_space ) 
+		( ('[' optional_space ']') / ('[' optional_space array_entry (mandatory_space array_entry)* optional_space ']' optional_space) ) <ArrayLiteral>
 	end
 	
 	rule array_entry
@@ -409,7 +415,7 @@ grammar Survenity
 	end
 	
 	rule seq_tail
-		(sequence value seq_tail)  / ""
+		(sequence value seq_tail) <Sequence> / ""
 	end
 	
 	rule exponential
@@ -417,7 +423,7 @@ grammar Survenity
 	end
 	
 	rule exp_tail
-		(power sequential exp_tail)  / ""
+		(power sequential exp_tail) <Power> / ""
 	end
 	
 	rule product
@@ -429,13 +435,13 @@ grammar Survenity
 	end
 	
 	rule multiplicand
-		(times exponential product_tail) 
+		(times exponential product_tail) <Multiplicand>
 	end
 	
 	rule divisior
-		(divide exponential product_tail)  /
-		(integer_divide exponential product_tail)  /
-		(mod exponential product_tail) 
+		(divide exponential product_tail) <Divisior> /
+		(integer_divide exponential product_tail) <IntegerDivisor> /
+		(mod exponential product_tail) <Modulo>
 	end
 	
 	rule sum_tail
@@ -443,15 +449,15 @@ grammar Survenity
 	end
 	
 	rule addend
-		(plus product sum_tail) 
+		(plus product sum_tail) <Addend>
 	end
 	
 	rule subtrahend
-		(minus product sum_tail) 
+		(minus product sum_tail) <Subtrahend>
 	end
 	
 	rule value
-		(open_paren expression close_paren)  / types
+		(open_paren expression close_paren <EndParenExpression>) <ParenExpression> / types
 	end
 	
 	rule equal
@@ -492,6 +498,86 @@ grammar Survenity
 	
 	
 	########################################
+	# Control Flow
+	########################################
+	
+	rule conditional_statement
+		( if_else_statement / while_statement ) <ConditionalStatement>
+	end
+	
+	rule if_else_statement
+		(if_keyword mandatory_space conditional_expression optional_space comment? end_of_line
+		 ((statement / (optional_space comment?)) end_of_line)+
+		 (optional_space else_keyword optional_space comment? end_of_line
+		  ((statement / (optional_space comment?)) end_of_line)+)?
+		 optional_space end_keyword optional_space comment?) <IfElseStatement>
+	end
+	
+	rule while_statement
+		(while_keyword mandatory_space conditional_expression optional_space comment? end_of_line
+		((statement / (optional_space comment?)) end_of_line)+
+		optional_space end_keyword optional_space comment?) <WhileStatement>
+	end
+	
+	rule conditional_expression
+		(value conditional_operation?) <ConditionalExpression>
+	end
+	
+	rule conditional_operation
+		(equal_conditional / greater_than_conditional / less_than_conditional / greater_than_equal_conditional /
+		less_than_equal_conditional / not_equal_conditional)
+	end
+	
+	rule equal_conditional
+		(boolean_equal mandatory_space value) <EqualConditional>
+	end
+	
+	rule greater_than_conditional
+		(greater_than mandatory_space value) <GreaterThanCondtional>
+	end
+	
+	rule less_than_conditional
+		(less_than mandatory_space value) <LessThanConditonal>
+	end
+	
+	rule greater_than_equal_conditional
+		(greater_than_equal mandatory_space value) <GreaterThanEqualConditional>
+	end
+	
+	rule less_than_equal_conditional
+		(less_than_equal mandatory_space value) <LessThanEqualConditonal>
+	end
+	
+	rule not_equal_conditional
+		(not_equal mandatory_space value) <NotEqualConditonal>
+	end
+	
+	rule boolean_equal
+		("==")
+	end
+	
+	rule greater_than
+		(">")
+	end
+	
+	rule greater_than_equal
+		(">=")
+	end
+	
+	rule less_than
+		("<")
+	end
+	
+	rule less_than_equal
+		("<=")
+	end
+	
+	rule not_equal
+		("!=" / "=/=")
+	end
+	
+	
+	########################################
 	# Language Literals
 	########################################
 	
@@ -501,11 +587,11 @@ grammar Survenity
 	
 	# Change this implementation to not use the '*' multiplier
 	rule function
-		(variable open_paren (parameters / optional_space) close_paren)  
+		(variable open_paren (parameters / optional_space) close_paren) <Function> 
 	end
 	
 	rule parameters
-		((expression ',' optional_space parameters) / expression) 
+		((expression ',' optional_space parameters) / expression) <Parameters>
 	end
 	
 	rule number
@@ -513,11 +599,11 @@ grammar Survenity
 	end
 	
 	rule integer
-		('-'? [0-9]+) 
+		('-'? [0-9]+) <IntegerLiteral>
 	end
 	
 	rule decimal
-		('-'? [0-9]* '.' [0-9]+) 
+		('-'? [0-9]* '.' [0-9]+) <DecimalLiteral>
 	end
 	
 	rule open_paren
@@ -528,21 +614,45 @@ grammar Survenity
 		')' optional_space
 	end
 	
+	rule open_square_bracket
+		'[' optional_space
+	end
+	
+	rule close_square_bracket
+		']' optional_space
+	end
+	
 	rule variable
 		(!(keywords (mandatory_space / end_of_line)) 
-		([a-z] [a-zA-Z0-9_]*) array_index*) 
+		([a-z] [a-zA-Z0-9_]*) array_index*) <VariableType>
 	end
 	
 	rule array_index
-		("[" optional_space (value / variable) "]") 
+		( open_square_bracket optional_space (expression / variable) close_square_bracket <EndArrayIndex>) <ArrayIndex>
 	end
 	
 	rule constant
-		([A-Z] [a-zA-Z0-9_]*) 
+		([A-Z] [a-zA-Z0-9_]*) <Constant>
 	end
 	
 	rule null_keyword
-		("null") 
+		("null") <NullKeyword>
+	end
+	
+	rule if_keyword
+		('if')
+	end
+	
+	rule else_keyword
+		("else") <ElseKeyword>
+	end
+	
+	rule end_keyword
+		("end") <EndKeyword>
+	end
+	
+	rule while_keyword
+		("while")
 	end
 	
 	rule keywords
@@ -552,7 +662,7 @@ grammar Survenity
 	end
 	
 	########################################
-	# Whitespace & Other Symbols
+	# Whitespace & Symbols
 	########################################
 	
 	rule comma

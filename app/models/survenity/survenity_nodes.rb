@@ -1267,10 +1267,10 @@ module Multiplicand
   
 end
 
-module Divisior
+module Divisor
   
   def name
-    return :divisior
+    return :divisor
   end
   
 end
@@ -1450,6 +1450,148 @@ module NullKeyword
   
   def name
     return :null_keyword
+  end
+  
+end
+
+
+module IfKeyword
+  
+  def name
+    return :if_keyword
+  end
+  
+end
+
+
+module ElseKeyword
+  
+  def name
+    return :else_keyword
+  end
+  
+end
+
+module Else
+  
+  def name
+    return :else
+  end
+  
+end
+
+module End
+  
+  def name
+    return :end
+  end
+  
+end
+
+
+module EndKeyword
+  
+  def name
+    return :end_keyword
+  end
+  
+end
+
+
+module WhileKeyword
+  
+  def name
+    return :while_keyword
+  end
+  
+end
+
+
+
+module ConditionalStatement
+  
+  def name
+    return :conditional_statement
+  end
+  
+end
+
+
+module IfElseStatement
+  
+  def name
+    return :if_else_statement
+  end
+  
+end
+
+
+module WhileStatement
+  
+  def name
+    return :while_statement
+  end
+  
+end
+
+
+module ConditionalExpression
+  
+  def name
+    return :condtional_expression
+  end
+  
+end
+
+module EqualConditional
+  
+  def name
+    return :equal_conditional
+  end
+  
+end
+
+
+module GreaterThanConditional
+  
+  def name
+    return :greater_than_conditional
+  end
+  
+end
+
+
+module LessThanConditional
+  
+  def name
+    return :less_than_conditional
+  end
+  
+end
+
+
+module GreaterThanEqualConditional
+  
+  def name
+    return :greater_than_equal_conditional
+  end
+  
+end
+
+
+module LessThanEqualConditional
+  
+  def name
+    return :less_than_equal_conditional
+  end
+  
+end
+
+
+module NotEqualConditional
+  
+  def name
+    return :not_equal_conditional
   end
   
 end

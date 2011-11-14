@@ -28,7 +28,7 @@ module Mal
     
     def self.parse_with_treetop(file_path)
       Treetop.load("#{File.dirname(__FILE__)}/Survenity.treetop")
-      parser = SurvenityParser.new
+      parser = SurvenityGrammarParser.new
       parser.parse(File.open(file_path).read)
       
       puts misbehave + "  (Parse Error)\n\n"

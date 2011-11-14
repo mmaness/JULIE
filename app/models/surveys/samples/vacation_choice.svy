@@ -135,7 +135,12 @@ ChoiceExperiment VacationChoice
   add_design <- [0 1 0]
   add_design <- [1 0 1]
   
+
 Calculation EndOfSurvey
-  1+1
+  while x <= y
+    x = 1
+    #comment
+  end
+end
   
 EndSurvey

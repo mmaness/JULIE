@@ -207,7 +207,8 @@ grammar SurvenityGrammar
 	
 	rule calculation_question
 		("Calculation" question_name end_of_line
-		block:((statement | (optional_space comment?)) end_of_line)+) <CalculationQuestion>
+		block:((statement | (optional_space comment?)) end_of_line)+
+		optional_space end_keyword optional_space end_of_line) <CalculationQuestion>
 	end
 	
 	rule question_name
@@ -227,9 +228,9 @@ grammar SurvenityGrammar
 	end
 	
 	rule calculation
-		("calculation" mandatory_space time:("before" | "after") optional_space end_of_line
-		block:((statement | (optional_space comment?)) end_of_line)*
-		optional_space "end" optional_space comment?) <Calculation>
+		("calculation" mandatory_space time:("before" | "after") optional_space comment? end_of_line
+		block:((statement | (optional_space comment?)) end_of_line)+
+		optional_space end_keyword optional_space comment?) <Calculation>
 	end
 	
 	rule section
@@ -354,7 +355,7 @@ grammar SurvenityGrammar
 	########################################
 
 	rule statement
-		( optional_space executable:(assignment | expression) comment? ) <Statement> 
+		( optional_space executable:(conditional_statement | assignment | expression) comment? ) <Statement> 
 	end
 	
 	rule assignment
@@ -438,7 +439,7 @@ grammar SurvenityGrammar
 	end
 	
 	rule divisior
-		(divide exponential product_tail) <Divisior> |
+		(divide exponential product_tail) <Divisor> |
 		(integer_divide exponential product_tail) <IntegerDivisor> |
 		(mod exponential product_tail) <Modulo>
 	end
@@ -493,6 +494,86 @@ grammar SurvenityGrammar
 	
 	rule sequence
 		".." optional_space
+	end
+	
+	
+	########################################
+	# Control Flow
+	########################################
+	
+	rule conditional_statement
+		( if_else_statement | while_statement ) <ConditionalStatement>
+	end
+	
+	rule if_else_statement
+		(if_keyword mandatory_space conditional_expression optional_space comment? end_of_line
+		 if_block:((statement | (optional_space comment?)) end_of_line)+
+		 (optional_space else_keyword optional_space comment? end_of_line
+		  else_block:((statement | (optional_space comment?)) end_of_line)+)? <Else>
+		 optional_space end_keyword <EndKeyword> optional_space comment?) <IfElseStatement>
+	end
+	
+	rule while_statement
+		(while_keyword mandatory_space conditional_expression optional_space comment? end_of_line
+		block:((statement | (optional_space comment?)) end_of_line)+
+		optional_space end_keyword <EndKeyword> optional_space comment?) <WhileStatement>
+	end
+	
+	rule conditional_expression
+		(value conditional_operation?) <ConditionalExpression>
+	end
+	
+	rule conditional_operation
+		(equal_conditional | greater_than_conditional | less_than_conditional | greater_than_equal_conditional |
+		less_than_equal_conditional | not_equal_conditional)
+	end
+	
+	rule equal_conditional
+		(boolean_equal mandatory_space value) <EqualConditional>
+	end
+	
+	rule greater_than_conditional
+		(greater_than mandatory_space value) <GreaterThanConditional>
+	end
+	
+	rule less_than_conditional
+		(less_than mandatory_space value) <LessThanConditional>
+	end
+	
+	rule greater_than_equal_conditional
+		(greater_than_equal mandatory_space value) <GreaterThanEqualConditional>
+	end
+	
+	rule less_than_equal_conditional
+		(less_than_equal mandatory_space value) <LessThanEqualConditional>
+	end
+	
+	rule not_equal_conditional
+		(not_equal mandatory_space value) <NotEqualConditional>
+	end
+	
+	rule boolean_equal
+		("==")
+	end
+	
+	rule greater_than
+		(">")
+	end
+	
+	rule greater_than_equal
+		(">=")
+	end
+	
+	rule less_than
+		("<")
+	end
+	
+	rule less_than_equal
+		("<=")
+	end
+	
+	rule not_equal
+		("!=" | "=/=")
 	end
 	
 	
@@ -556,6 +637,22 @@ grammar SurvenityGrammar
 	
 	rule null_keyword
 		("null") <NullKeyword>
+	end
+	
+	rule if_keyword
+		("if")
+	end
+	
+	rule else_keyword
+		("else") <ElseKeyword>
+	end
+	
+	rule end_keyword
+		("end")
+	end
+	
+	rule while_keyword
+		("while")
 	end
 	
 	rule keywords

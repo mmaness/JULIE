@@ -5,7 +5,7 @@ ChoiceExperiment SP_Test
       "20 \"mpg\""
     add_level 1, 30
       '30 "mpg"'
-    add_level 2, 40
+    add_level 2, 40 
       '40 "mpg"'
       
   alternative 'Gasoline Vehicle' 

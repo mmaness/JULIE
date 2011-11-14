@@ -1,9 +1,21 @@
 Calculation Calc_1
-    x = [1 2 3]
-    y = 10
-    t = 0
-    z = x[t+1] * y
-    w = (x[0]) - (2) + 3
-    w+y
+  x = 3
+  y = (2 + x)
+  z = 12-3*((7-4/3)+8)
+    
+  if x == y
+    x = 1
+    y = 2
+  else
+    x = 0
+    y = 0
+  end
+  
+  while x > 0
+    x = x - 1
+    y = y + 1
+  end
+  
+end
 
-EndSurvey
+EndSurvey 

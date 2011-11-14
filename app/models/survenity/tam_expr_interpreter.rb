@@ -46,6 +46,7 @@ module Tam
   # Turns a parse tree into a sequential list
   def self.list_tree(match, list)
     if match.matches.length == 0
+      list << match if match.name
       return
     else
       list << match if match.name
@@ -98,14 +99,13 @@ module Tam
       end
     end
     
-    puts "value: #{value}"
-    
     while match_list.size > 0
       current_expr = match_list.pop    #current expression
       
       break if current_expr.name == :end_paren_expression
       break if current_expr.name == :end_array_index
       
+      puts value.to_s + ',' + value_type(value, statement).to_s
       case value_type(value, statement)
         
       when :string
@@ -139,6 +139,7 @@ module Tam
           value = sequence_numbers(value, match_list, variable_hash, statement)
           
         else
+          puts "error: current_expr=#{current_expr}, name=#{current_expr.name}"
           raise UnsupportedOperationError, "Unsupported operation error: In statement,\n#{statement.to_s}\nAn operation is unsupported by this interpreter."
           
         end
