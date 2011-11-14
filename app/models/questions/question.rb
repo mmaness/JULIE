@@ -477,7 +477,7 @@ module RubyJulie
       return true
     end
     
-    def isValid(answer)
+    def isValid(answer, variable_hash)
       return true
     end
     
@@ -502,7 +502,7 @@ module RubyJulie
       return true
     end
     
-    def isValid(answer)
+    def isValid(answer, variable_hash)
       return true
     end
     
@@ -573,7 +573,7 @@ module RubyJulie
       return true
     end
     
-    def isValid(answer)
+    def isValid(answer, variable_hash)
       return true
     end
     
@@ -586,7 +586,7 @@ module RubyJulie
       return true
     end
     
-    def isValid(answer)
+    def isValid(answer, variable_hash)
       return true
     end
     
