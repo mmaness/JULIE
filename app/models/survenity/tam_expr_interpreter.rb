@@ -153,6 +153,41 @@ module Tam
     return value
   end
   
+  #Determines if the statement is a conditional statement
+  def self.conditional_statement?(parse_tree)
+    return parse_tree.name == :conditional_statement
+  end
+  
+  #Handles conditional statements
+  def self.conditional_statement(match_list, variable_hash, statement)
+    
+    #Read the next match to see what type of conditional statement it is
+    type = match_list.pop
+    
+    case type.name
+      
+    when :if_else_statement
+      #Determine if the conditional case is true or false
+      condition = self.conditional_expression(statement.conditional_expression, variable_hash)
+      
+      #Run the interpreter on either if or else part of the conditional statement
+      if condition
+        run_interpreter(statement.if_block.captures[:statement], variable_hash)
+      else
+        run_interpreter(statement.else_block.captures[:statement], variable_hash)
+      end
+      
+    when :while_statement
+      while self.conditional_expression(statement.conditional_expression, variable_hash) do
+        run_interpreter(statement.block.captures[:statement], variable_hash)
+      end
+      
+    else
+      raise UnsupportedConditionalStatementError, "Unsupported conditional statement error: In statement,\n#{statement.to_s}\nAn operation is unsupported by this interpreter."
+    end
+    
+  end
+  
   #helper method to get the value of the next operand
   def self.get_next_operand(match_list, variable_hash, statement)
     right_operand = match_list.pop
@@ -347,6 +382,9 @@ module Tam
     
   end
   
-end
+  # Error for when a conditional statement is being interpretered which isn't supported
+  class UnsupportedConditionalStatementError < StandardError
+    
+  end
   
-   
+end

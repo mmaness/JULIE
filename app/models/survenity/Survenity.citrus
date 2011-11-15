@@ -506,17 +506,17 @@ grammar SurvenityGrammar
 	end
 	
 	rule if_else_statement
-		(if_keyword mandatory_space conditional_expression optional_space comment? end_of_line
+		(if_keyword <IfElseStatement> mandatory_space conditional_expression optional_space comment? end_of_line
 		 if_block:((statement | (optional_space comment?)) end_of_line)+
 		 (optional_space else_keyword optional_space comment? end_of_line
 		  else_block:((statement | (optional_space comment?)) end_of_line)+)? <Else>
-		 optional_space end_keyword <EndKeyword> optional_space comment?) <IfElseStatement>
+		 optional_space end_keyword <EndKeyword> optional_space comment?)
 	end
 	
 	rule while_statement
-		(while_keyword mandatory_space conditional_expression optional_space comment? end_of_line
+		(while_keyword <WhileStatement> mandatory_space conditional_expression optional_space comment? end_of_line
 		block:((statement | (optional_space comment?)) end_of_line)+
-		optional_space end_keyword <EndKeyword> optional_space comment?) <WhileStatement>
+		optional_space end_keyword <EndKeyword> optional_space comment?)
 	end
 	
 	rule conditional_expression
