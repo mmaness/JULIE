@@ -455,7 +455,7 @@ module Kaywinnit
     warn "    Warning: Question #{parse_tree.question_name.value} has more than one bounds trait.  Only the first one will be used" if parse_tree.multiple_bounds_warning
       
     #Check for number bounds which are in incorrect order
-    if question.lower_bound.class != Symbol && question.upper_bound.class != Symbol
+    if question.lower_bound && question.upper_bound && question.lower_bound.class != Symbol && question.upper_bound.class != Symbol
       raise Mal::ImproperResponseBoundsError, "The lower bound (#{question.lower_bound}) for question #{parse_tree.question_name.value} is larger than the upper bound (#{question.upper_bound})." if question.lower_bound > question.upper_bound
     end
   end

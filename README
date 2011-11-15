@@ -10,12 +10,15 @@ and Ruby programming language.
 
 
 == Release Notes
-   Version 1.8.1
+   Version 1.8.2
 
-The following changes were made:
+This is a small update.
+
+The following changes were made (including 1.8.1 release notes):
 
 * Added a new sample survey, math_exam.svy.  It is a short Algebra exam with branching 
   depending on right and wrong answers
+* Added a new sample survey, vacation_survey_extended.svy
 * Citrus parser no longer ends all ruby execution if an error is thrown. It will 
   throw an exception instead.
 * Survenity grammar changed so that the traits "branch" and "default_branch" can have 
@@ -38,6 +41,8 @@ The following bugs were found and fixed:
   (Bugfix: Decimal-Input Questions)
 * The variable hash should now store integer and decimal values from Number-Input Questions
   correctly as Ruby FixNum and Float objects respectively. (Bugfix: Variable Model/Table)
+* Performed additional bugfixes on bounds for Number-Input Questions. 
+  (Bugfix: Kaywinnit Compiler)
  
 == Getting Started
 
