@@ -1270,7 +1270,7 @@ end
 module Divisior
   
   def name
-    return :divisior
+    return :divisor
   end
   
 end

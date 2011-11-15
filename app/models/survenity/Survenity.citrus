@@ -126,7 +126,7 @@ grammar SurvenityGrammar
 	end
 	
 	rule branch_block
-		(optional_space ((comment? end_of_line) | (trait:(branch | default_branch) comment? (end_of_line))))
+		(optional_space ((comment? end_of_line) | (trait:(branch | default_branch) jcomment? (end_of_line))))
 		<Trait>
 	end
 	

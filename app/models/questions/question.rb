@@ -376,6 +376,7 @@ module RubyJulie
       @upper_bound = @upper_bound.to_i if @upper_bound.is_a?(String)
       @lower_bound = @lower_bound.to_i if @lower_bound.is_a?(String)
       
+      @upper_bound = 1<<29 unless @upper_bound    #Takes care of nil @upper_bound
       
       if @lower_bound && (answer.to_i > @upper_bound || answer.to_i < @lower_bound)
         @invalidInput = "Your answer must be between " + @lower_bound.to_s + " and " + @upper_bound.to_s + "."

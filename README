@@ -31,7 +31,7 @@ The following bugs were found and fixed:
 * Number-Input Questions should compile now if they have no bounds.
   (Bugfix: Kaywinnit Compiler)
 * Assigning single-quoted strings should now work. (Bugfix: Tam Expression Interpreter)
-* for Number-Input Questions where an error would be thrown when answering a
+* For Number-Input Questions where an error would be thrown when answering a
   Number-Input Question with no bounds. (Bugfix: Number-Input Questions)
 * "Before calculations" for a question that is rendered after a Multiple Branch or 
   Single Branch should now perform correctly. (Bugfix: JULIE Controller)

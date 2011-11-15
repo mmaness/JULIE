@@ -139,6 +139,7 @@ module Tam
           value = sequence_numbers(value, match_list, variable_hash, statement)
           
         else
+          puts "operation: #{current_expr.name}"
           raise UnsupportedOperationError, "Unsupported operation error: In statement,\n#{statement.to_s}\nAn operation is unsupported by this interpreter."
           
         end

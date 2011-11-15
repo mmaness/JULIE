@@ -1,0 +1,155 @@
+# A simple survey about vacation preferences
+# Written by Michael Maness
+
+SurveySettings GeneralSettings
+  survey_name "Vacation Choice Survey"
+  survey_description "A simple survey to show JULIE's features"
+  section "Section 1 of 2: Most Recent Trip"
+  
+Dummy Intro
+  text "Welcome to the Vacation Choice Survey"
+  text "<br/><br/>"
+  text "First, you will be asked a series of questions about your"
+  text "most recent vacation."
+  
+YesNo RecentVacation
+  text "Have you taken a vacation away (for at least three days)"
+  text "from home within the last 12 months?"
+  
+MultipleBranch RecentVacationBranch
+  reference RecentVacation
+  branch "Yes", International
+  default_branch EndOfSurvey
+  
+YesNo International
+  text "For your most recent trip, did you leave the country?"
+  
+MultipleBranch InternationalBranch
+  reference International
+  branch "Yes", Country
+  branch "No", State
+  
+OpenEnded Country
+  text "What country did you visit primarily?"
+  text "<br/>(If you visited more than one country, which country"
+  text "did you spend the most time at?)"
+  calculation after
+    comma = ","
+  end
+  
+SingleBranch City
+
+OpenEnded State
+  text "What state did you visit?"
+  
+OpenEnded City
+  text "What city did you visit?"
+  
+TextArea TripReason
+  text "How did you decide on visiting :(City):(comma) :(State) "
+  text ":(Country)?"
+
+Integer TripLength
+  text "In terms of days, how long was your trip?"
+  bounds 3, 365
+    
+MultipleChoice Enjoyment
+  text "How much did you enjoyed your trip?"
+  choice "Very much"
+  choice "Somewhat"
+  choice "Indifferent"
+  choice "Not much"
+  choice "Not at all"
+
+Integer TripCost
+  text "How much did your trip cost, in US dollars?"
+  bounds 0
+
+  
+SurveySettings NewSection
+  section "Section 2 of 2: Future Trip"
+  
+Dummy ExpInstructions
+  text "You will be given four scenarios about different vacations"
+  text "you can choose from."
+  
+Scenario SP1
+  experiment VacationChoice
+  calculation before
+    low_cost = TripCost / 2
+    high_cost = TripCost * 2
+    short_trip = TripLength - 2
+    long_trip = TripLength + 2
+  end
+  
+Scenario SP2
+  experiment VacationChoice
+  
+Scenario SP3
+  experiment VacationChoice
+  
+Scenario SP4
+  experiment VacationChoice
+  
+ChoiceExperiment VacationChoice
+  
+  attribute Attractions
+    attribute_label "Attractions"
+    add_level 0, 0
+      "Beach"
+    add_level 1, 1
+      "Ski Resort"
+  attribute Cost
+    attribute_label "Trip Cost"
+    add_level 0, 1
+      "$:(TripCost)"
+    add_level 1, 0.5
+      "$:(low_cost)"
+    add_level 2, 2
+      "$:(high_cost)"
+  attribute Nights
+    attribute_label "Trip Length"
+    add_level 0, -2
+      ":(short_trip) days"
+    add_level 1, 0
+      ":(TripLength) days"
+    add_level 2, 2
+      ":(long_trip) days"
+  attribute OutOfCountry
+    attribute_label "International Trip?"
+    add_level 0, 0
+      "No"
+    add_level 1, 1
+      "Yes"
+  
+  alternative "Vacation A"
+    set_levels_for Attractions <- [0 1]
+    set_levels_for Cost <- [0 1 2]
+    set_levels_for Nights <- [0 1 2]
+    set_levels_for OutOfCountry <- [0 1]
+  alternative "Vacation B"
+    set_levels_for Attractions <- [0 1]
+    set_levels_for Cost <- [0 1 2]
+    set_levels_for Nights <- [0 1 2]
+    set_levels_for OutOfCountry <- [0 1]
+
+  pre_table_text "The following vacation options are available:"
+  post_table_text "From the vacations shown above, which would you prefer for your next trip?"
+  
+  choice "I will take Vacation A"
+  choice "I will take Vacation B"
+  
+  add_design <- [0 0 0 0]
+  add_design <- [1 1 1 1]
+  add_design <- [0 1 0 0]
+  add_design <- [1 0 1 1]
+  add_design <- [1 2 2 0]
+  add_design <- [0 2 1 1]
+  add_design <- [0 2 2 0]
+  add_design <- [1 1 2 1]
+  add_design <- [0 1 2 0]
+  
+Calculation EndOfSurvey
+  1+1
+  
+EndSurvey
