@@ -1,4 +1,4 @@
-== Welcome to JULIE, version 1.8.1
+== Welcome to JULIE, version 1.8.2
 Copyright (C) 2007-2011  Michael Maness
 
 
@@ -18,7 +18,7 @@ The following changes were made (including 1.8.1 release notes):
 
 * Added a new sample survey, math_exam.svy.  It is a short Algebra exam with branching 
   depending on right and wrong answers
-* Added a new sample survey, vacation_survey_extended.svy
+* Added a new sample survey, vacation_choice_extended.svy
 * Citrus parser no longer ends all ruby execution if an error is thrown. It will 
   throw an exception instead.
 * Survenity grammar changed so that the traits "branch" and "default_branch" can have 
