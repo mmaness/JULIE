@@ -311,7 +311,11 @@ class SurveyController < ApplicationController
       session[:count] += 1
     else
       flash[:notice] = @question.invalidInput
-      redirect_to :action => "question"
+      if @question.scenario?    #This may need to be changed when the page system is fully implemented
+        redirect_to :action => "scenario"
+      else
+        redirect_to :action => "question"
+      end
       return
     end
     

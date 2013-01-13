@@ -34,7 +34,7 @@
 					
 					<% if flash[:notice] != nil %>
 						<div style="color: red" class="notice">Sorry, your answer was not valid:<br>
-						<%= flash[:notice] %></div>
+						<%= flash[:notice] %></div><br>
 					<% end %>
 				
 					<%= @pre_table_text.html_safe if @pre_table_text%>
