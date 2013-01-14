@@ -203,26 +203,32 @@ class SurveyController < ApplicationController
     #PLACE HOLDER FOR CHANGES TO THE EXPERIMENTS WHICH WILL ALLOW FOR DESIGNS W/O REPLACEMENT
     designs_used = nil
     
-    @rows = @question.rows(@experiment, designs_used)
-    index = 0
-    
-    @rows.each do
-      |row|
+    # Checks to see if the the rows should be the same as the last scenario shown
+    if session[:rows_to_keep] == nil
+      @rows = @question.rows(@experiment, designs_used)
+      index = 0
       
-      # Add attribute labels to the left column of the table
-      if attributes != nil
-        if attributes[index] == nil
-          row.reverse!.push("").reverse!
-        else
-          row.reverse!.push(attributes[index]).reverse!
+      @rows.each do
+        |row|
+        
+        # Add attribute labels to the left column of the table
+        if attributes != nil
+          if attributes[index] == nil
+            row.reverse!.push("").reverse!
+          else
+            row.reverse!.push(attributes[index]).reverse!
+          end
         end
+        
+        index += 1
+        row.map! {|cell| replaceSymbolsInString(replaceVariablesInString(cell, @survey), @variable_hash)}
       end
       
-      index += 1
-      row.map! {|cell| replaceSymbolsInString(replaceVariablesInString(cell, @survey), @variable_hash)}
+      session[:rows_to_keep] = @rows
+      session[:design] = @question.design.join(" ")
+    else
+      @rows = session[:rows_to_keep]
     end
-    
-    session[:design] = @question.design.join(" ")
     
     if @count == 0 && @count_actual == 0
       @back = false
@@ -235,6 +241,10 @@ class SurveyController < ApplicationController
   
   # Method/Page to check that an answer is valid (future function),
   # increment the survey questions, and redirect the user as needed
+  #
+  # FUTURE DEVELOPMENT: Need to change some of these session entries to params
+  # entries since they are only needed temporarily, then I won't have to
+  # keep track of setting them to nil
   def check
     load 'questions/question.rb'
     
@@ -312,12 +322,15 @@ class SurveyController < ApplicationController
     else
       flash[:notice] = @question.invalidInput
       if @question.scenario?    #This may need to be changed when the page system is fully implemented
+        puts 'ROWSSSSSSSSSSSSSSSSSSSSSSSSS:' + session[:rows_to_keep].to_s
         redirect_to :action => "scenario"
       else
         redirect_to :action => "question"
       end
       return
     end
+    
+    session[:rows_to_keep] = nil
     
     if Page.find_by_sequence_id(session[:count]) == nil
       #Update the variable hash
