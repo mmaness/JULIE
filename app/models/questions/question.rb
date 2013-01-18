@@ -177,7 +177,7 @@ module RubyJulie
       if choiceMap != nil
         @values.push(choiceMap)
       else
-        @values.push(nil)
+        @values.push(@values.length + 1)
       end
     end
     
@@ -191,6 +191,10 @@ module RubyJulie
   
     # Checks if the choice is within the index range (zero-based) of the question
     def isValid(index, variable_hash)
+      if (@default && answer == @default && answer != nil)
+        return true
+      end
+      
       if (super == false)
        return false
       end
@@ -229,6 +233,10 @@ module RubyJulie
     
     # Checks whether an array of indices are valid (zero-based)
     def isValid(index, variable_hash)
+      if (@default && answer == @default && answer != nil)
+        return true
+      end
+      
       if index == nil
         return true
       end
@@ -252,8 +260,8 @@ module RubyJulie
     
     def initialize(name, question = "")
       super(name, question)
-      self.addChoice("Yes")
-      self.addChoice("No")
+      self.addChoice("Yes", 1)
+      self.addChoice("No", 2)
     end
     
   end

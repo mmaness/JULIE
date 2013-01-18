@@ -103,9 +103,10 @@
 			<% if @back == true %>
 			Press <b>BACK</b> to go to the last question... <%= button_to "  <<  BACK   ", :action => "back", :submit_count => @count_actual %><br><br>
 			<% end %>
-			<% if @dummy != true && @questionObject.skip == true %>
-			If you feel uncomfortable answering this question, Press <b>SKIP</b>... <%= button_to "  < SKIP >  ", :action => "skip", :submit_count => @count_actual%>
+			<% if @questionObject.skip? == true %>
+			If you feel uncomfortable answering this question, Press <b>SKIP</b>... <%= button_to "  < SKIP >  ", :action => "check", :skip => true, :submit_count => @count_actual%>
 			<% end %>
+			<%= @sequence.to_s%>
 			</div>
 			</div>
 			
@@ -114,7 +115,7 @@
 			<div id="footer">
 	
 				<span id="design-by">Created with <a href="http://www.github.com/mmaness/JULIE">JULIE</a></span> 
-		  			Copyright &copy; Michael Maness 2007-2011.
+		  			Copyright &copy; Michael Maness 2007-2013.
 	
 			</div>
 
@@ -124,4 +125,4 @@
 
 <!-- JULIE: Software for Conducting Travel Surveys and Other Surveys --> 
 <!-- Created by Michael Maness -->
-<!-- Copyright 2007 - 2011 -->
+<!-- Copyright 2007 - 2013 -->

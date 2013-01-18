@@ -440,7 +440,7 @@ module Kaywinnit
       |calc|
       question.after_calculations += calc.to_s + "\n"
     end
-    question.skip = false if parse_tree.skip?
+    question.skip = parse_tree.skip?
     question.default_answer = parse_tree.default_answer
     question.default_message = parse_tree.default_message
   end

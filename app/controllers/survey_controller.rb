@@ -1,5 +1,5 @@
 # JULIE - an open-source survey design and administration framework
-# Copyright (C) 2007-2011  Michael Maness
+# Copyright (C) 2007-2013  Michael Maness
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -134,16 +134,23 @@ class SurveyController < ApplicationController
       
     end
     
-    @count = session[:ques_count]
-    @count_actual = session[:count]
+    @count = session[:ques_count]  #the number of questions seen by the respondent
+    @count_actual = session[:count]  #the current page id
     
-    if @count == 1 && @count_actual == 1
-      @back = false
-    elsif @count == 1 && (Page.first.questions[0].question_object.calculation? || Page.first.questions[0].question_object.survey_settings?)
+    @sequence = session[:sequence]
+    if session[:sequence].length <= 0
       @back = false
     else
       @back = true
     end
+    
+    #if @count == 1 && @count_actual == 1
+    #  @back = false
+    #elsif @count == 1 && (Page.first.questions[0].question_object.calculation? || Page.first.questions[0].question_object.survey_settings?)
+    #  @back = false
+    #else
+    #  @back = true
+    #end
   end
   
   
@@ -278,11 +285,13 @@ class SurveyController < ApplicationController
         params[:answer] += 720
       end
       params[:answer] = params[:answer].to_s
-    end    
+    end
     
-    if @question.isValid(params[:answer], @variable_hash)
     
-      session[:sequence].push(session[:count])  # Adds the question just answered to the sequence
+    # Checks to see if the answer is valid or if the question was skipped
+    if params[:skip] || @question.isValid(params[:answer], @variable_hash)
+    
+      session[:sequence].push(session[:count]) unless (@question.survey_settings? || @question.calculation?)  # Adds the question just answered to the sequence
       
       unless (@question.dummy? || @question.calculation? || @question.survey_settings?)
         # Inputs the value given into the Database
@@ -302,6 +311,7 @@ class SurveyController < ApplicationController
           end
         else
           response = params[:answer]
+          response = '*SKIP*' if params[:skip]  #Checks if the question is skipped, then allocates the correct "skip" response
         end
         
         Response.update(session[:ID], { @question.name => response})
@@ -364,7 +374,8 @@ class SurveyController < ApplicationController
       
       question = Page.find_by_sequence_id(session[:count]).questions[0].question_object
       if !(question.dummy? || question.calculation? || question.link? || question.survey_settings?)
-        session[:ques_count] -= 1        
+        session[:ques_count] -= 1
+        #session[:sequence].pop if question.dummy?
       end
       
       while question.calculation? || question.link? || question.database? || question.survey_settings? do
@@ -384,6 +395,7 @@ class SurveyController < ApplicationController
     
     redirect_to :action => "question"
   end
+  
   
   
   def results
