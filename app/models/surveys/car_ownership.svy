@@ -1,0 +1,308 @@
+# The Maryland Vehicle Preference Survey
+# Michael Maness, copyright 2013
+# Written: January 2013
+
+SurveySettings GeneralSettings
+  survey_name "Maryland Vehicle Preference Survey"
+  survey_description "A survey about current vehicle characteristics and preferences for future vehicles."
+  
+OpenEnded RespondentID
+  t "If you recieved a flyer to participate, please enter your respondent ID (located at the bottom of the flyer)."
+  t ""
+  t 'If you do not have a respondent ID, check the box next to "I do not know" and press NEXT.'
+  add_default_answer -98
+  
+# Part 1: Household Information
+SurveySettings Section1
+  section "Section 1 of 5: You and Your Household"
+
+Dummy Part1
+  t "In the first section, you will be asked questions about you and your household"
+  t ""
+  t "This section is expected to take <b>5 minutes</b> to complete with <b>13-15 questions expected</b>.<br>"
+
+# Questions about the respondent
+MultipleChoice Gender
+  t  "What is your gender?"
+  choice "Male", 1
+  choice "Female", 2
+
+Integer Age
+  t "What is your age?"
+  bounds 1, 130
+
+MultipleChoice Education
+  t "What is your level of education?"
+  choice "Less than high school"
+  choice "High school graduate"
+  choice "Some college"
+  choice "Associate degree"
+  choice "Bachelor's degree"
+  choice "Graduate or professional degree"
+
+
+# Questions about the respondent's household
+
+YesNo HeadOfHousehold
+  t "Do you consider yourself the head of the household?"
+
+MultipleChoice Income
+  t "What is your household income?"
+  choice "Less than $24,999"
+  choice "$25,000 to $49,999"
+  choice "$50,000 to $74,999"
+  choice "$75,000 to $99,999"
+  choice "$100,000 to $149,999"
+  choice "$150,000 to $249,999"
+  choice "$250,000 or more"
+
+MultipleChoice Kids
+  t "How many children <b>age 12 or under</b> live in your household?"
+  choice "0", 0
+  choice "1", 1
+  choice "2", 2
+  choice "3", 3
+  choice "4", 4
+  choice "5", 5
+  choice "More than 5", 6
+
+MultipleChoice Adolescents
+  t "How many people <b>age 13 through 17</b> (13, 14, 15, 16, or 17) live in your household?"
+  choice "0", 0
+  choice "1", 1
+  choice "2", 2
+  choice "3", 3
+  choice "4", 4
+  choice "5", 5
+  choice "More than 5", 6
+
+MultipleChoice Adults
+  t "How many adults (including yourself) <b>age 18 or over</b> live in your household?"
+  choice "1", 1
+  choice "2", 2
+  choice "3", 3
+  choice "4", 4
+  choice "5", 5
+  choice "More than 5", 6
+
+MultipleChoice Workers
+  t "How many people in your household work?"
+  choice "0", 0
+  choice "1", 1
+  choice "2", 2
+  choice "3", 3
+  choice "4", 4
+  choice "More than 4", 5
+
+MultipleChoice State
+  t "What state do you currently live in?"
+  choice "Maryland"
+  choice "Virginia"
+  choice "District of Columbia"
+  choice "Other"
+
+Integer Zipcode
+  t "What is the zipcode of your living place?"
+
+MultipleChoice HomeType
+  t "Which of the following best describes your home?"
+  choice "College Dorm or similar student-based housing"
+  choice "Apartment"
+  choice "Condominium"
+  choice "Townhouse"
+  choice "Rowhouse"
+  choice "Single-Family Home, Detached House, or Separated House"
+  choice "Other"
+  
+# Work and Commute Questions
+MultipleChoice Occupation
+  t "During most of last week, were you..."
+  choice "Working full time (35 hours per week or more)"
+  choice "Working part time (less than 35 hours per week)"
+  choice "Looking for work"
+  choice "Homemaker"
+  choice "Going to school"
+  choice "Retired"
+  choice "Other"
+
+MultipleBranch CommuteLink
+  reference Occupation
+  branch "Homemaker", License
+  branch "Retired", License
+  branch "Looking for work", License
+  branch "Other", License
+  branch "*SKIP*", License
+  default_branch Commute
+
+Integer Commute
+  t "In miles, how far round-trip is your commute to work or school?"
+  t "For example, if you drive 10 miles to work and 10 miles back home, then input 20 miles."
+  t "If you drive 10 miles to work then 5 miles to pick up your kids and then 10 miles home,"
+  t "then input 25 miles"
+
+YesNo License
+  t "Do you have a driver license?"
+  
+# PART 2: Current Vehicle Characteristics
+SurveySettings Section2
+  section "Section 2 of 4: Current Vehicle Characteristics"
+
+Dummy Part2
+  t "In this section, you will be asked questions about the characteristics of the vehicles in your household."
+  t ""
+  t "Some questions will refer to your <b>primary vehicle</b>.  This is the vehicle that you use most often.<br>"
+  t "This section is expected to take <b>5 minutes</b> to complete with <b>15-22 questions expected</b>.<br>"
+  
+YesNo BuyAnotherVehicle
+  t "Does your household plan to buy a vehicle at some point over the next five years?"
+
+MultipleBranch BuyBranch
+  reference BuyAnotherVehicle
+  branch "Yes", BuyNewUsed
+  default_branch CarsPerHH
+
+MultipleChoice BuyNewUsed
+  t "Do you expect the vehicle you buy to be new or used/pre-owned?"
+  choice "New Vehicle"
+  choice "Used/Pre-Owned Vehicle"
+  choice "No Preference"
+
+MultipleChoice PurchaseTime
+  t "What year do you expect to buy a vehicle?"
+  choice "2013"
+  choice "2014"
+  choice "2015"
+  choice "2016"
+  choice "2017"
+  choice "2018"
+  choice "Not Sure"
+
+MultipleChoice CarsPerHH
+  t "How many cars does your household currently have?"
+  choice "No Cars in the Household", 0
+  choice "One Car in the Household", 1
+  choice "Two Cars in the Household", 2
+  choice "Three Cars in the Household", 3
+  choice "Four Cars in the Household", 4
+  choice "More than 4 Cars in the Household", 5
+
+MultipleBranch CarsLink
+  reference CarsPerHH
+  branch "No Cars in the Household", EndOfVehicleQuestions
+  branch "*SKIP*", EndOfVehicleQuestions
+  default_branch MakeModelPrimary
+
+
+# Input the primary vehicle make and model
+OpenEnded MakeModelPrimary
+  t "What is the make and model of your <b>primary vehicle</b> (the vehicle you drive most often)?"
+  t "Examples of make and model are: Ford F-150, Toyota Corolla, Ford Fusion, Chevy Malibu, Honda Civic"
+
+TextArea BuyReason1
+  t "Please describe why your household chose to buy your primary vehicle (:(MakeModelPrimary))?"
+  
+MultipleBranch OneCarLink
+  reference CarsPerHH
+  branch "One Car in the Household", HomeParking
+  default_branch MakeModelSecond
+
+# Input the secondary vehicle make and model
+OpenEnded MakeModelSecond
+  t "What is the make and model of your <b>second vehicle</b>?"
+
+TextArea BuyReason2
+  t "Please describe why your household chose to buy your second vehicle (:(MakeModelSecond))?"
+
+MultipleBranch TwoCarLink
+  reference CarsPerHH
+  branch "Two Cars in the Household", HomeParking
+  default_branch MakeModelThird
+
+# Input the tertiary vehicle make and model
+OpenEnded MakeModelThird
+  t "What is the make and model of your <b>third vehicle</b>?"
+
+TextArea BuyReason3
+  t "Please describe why your household chose to buy your third vehicle: (:(MakeModelThird))?"
+
+
+MultipleChoice HomeParking
+  t "Where do you typically park your vehicle(s) when at home?"
+  choice "Personal Garage"
+  choice "Personal Driveway"
+  choice "On-street"
+  choice "Outdoor Parking Lot"
+  choice "Parking Garage or Covered Parking Lot"
+  choice "Other"
+
+MultipleBranch CommuteLink2
+  reference Occupation
+  branch "Homemaker", Vehicle
+  branch "Retired", Vehicle
+  branch "Looking for work", Vehicle
+  branch "Other", Vehicle
+  branch "*SKIP*", Vehicle
+  default_branch DriveToWork
+
+MultipleChoice DriveToWork
+  t "Do you drive to work or school?"
+  choice "Drive to work or location near work"
+  choice "Drive to transit (bus, light rail, Metro)"
+  choice "Not Drive"
+
+MultipleBranch ParkingDecision
+  reference DriveToWork
+  branch "Not Drive", Vehicle
+  default_branch PARKING_COST
+
+Currency ParkingCost
+  t "How much does it cost you to park per month?"
+  t "If free, type in 0."
+  bounds 0.00
+
+
+Dummy Vehicle 
+  t "Please answer the following questions about your <b>primary vehicle</b>.<br>"
+  t "Your primary vehicle is the vehicle you drive most often."
+  t "You identified your primary vehicle as a <b>:(MakeModelPrimary)</b>.<br>"
+  
+Integer VehicleYear
+  t "What is the model year of your primary vehicle?"
+  bounds 1900, 2013
+  
+Integer VehicleMiles
+  t "On average, approximately how many miles does this vehicle travel per year?"
+  bounds 0
+  add_default_answer -98
+
+YesNo VehicleHybrid
+  t "Is your primary vehicle a Hybrid?"
+
+YesNo VehicleNew
+  t "Did you buy this vehicle new?  (The car has not been owned by anyone else)"
+
+MultipleBranch UsedLink
+  reference VehicleNew
+  branch "No", PurchaseYear
+  default_branch VehiclePrice
+
+Integer PurchaseYear
+  t "In what year did you purchase your primary vehicle?"
+  bounds 1900, 2011
+
+Integer VehiclePrice
+  t "Approximately how much did you pay for this vehicle?"
+  add_default_answer -98
+  bounds 0
+
+Integer VehicleMPG
+  t "What is your primary vehicle's fuel efficiency (MPG)?"
+  add_default_answer -98
+  bounds 0
+
+# Place holder question for question order logic
+Calculation EndOfVehicleQuestions
+  1+1
+  
+
+EndSurvey
