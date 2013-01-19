@@ -34,11 +34,14 @@ class SurveyController < ApplicationController
       @respondent.response = @response
       @experiment_response = ExperimentResponse.new
       @respondent.experiment_response = @experiment_response
+      @experiment_value = ExperimentValue.new
+      @respondent.experiment_value = @experiment_value
       
       @respondent.save
       @variable.save
       @response.save
       @experiment_response.save
+      @experiment_value.save
       
       session[:ID] = @respondent.id
       session[:count] = 1
