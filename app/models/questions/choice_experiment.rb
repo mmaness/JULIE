@@ -35,7 +35,7 @@ module RubyJulie
         @question = @@DEFAULT_QUESTION
         @after_table_text = ""
         @alternatives = []  # A list of the alternatives with levels
-        @options = []       # A list of the alternatives with and without levels
+        @options = []       # NEED TO REFACTOR THIS, I think it should be called 'choices' for consistency; A list of the alternatives with and without levels
         @variables = []
         @exp_design = []
         @scenarios = 1
