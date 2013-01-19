@@ -636,12 +636,16 @@ module RubyJulie
     
     # Determines the rows to show for this scenario
     # Must give the method an Experiment object
+    # Returns both an array of text to show and the corresponding values
     def rows(experiment, designs_used = nil, design = nil)
       # Initializes the table that represents the list of attribute levels for the respondent to see      
       table = Array.new(experiment.variables.size)
+      value_table = Array.new(experiment.variables.size)
+      
       (0..table.size-1).each do
         |i|
         table[i] = Array.new(experiment.alternatives.size)
+        value_table[i] = Array.new(experiment.alternatives.size)
       end
       
       alts = experiment.alternatives
@@ -655,12 +659,13 @@ module RubyJulie
         for j in (0..alts.size-1) do
           level = experiment.exp_design[design[j]][i]
           table[i][j] = experiment.variables[i].levels[j][level].question
+          value_table[i][j] = experiment.variables[i].levels[j][level].value
         end
       end
       
       @design = design
       
-      return table
+      return table, value_table
     end
     
     # Cycles through all the alternative names given and creates columns names in question_name underscore alt_name format

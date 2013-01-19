@@ -32,10 +32,13 @@ class SurveyController < ApplicationController
       @respondent.variable = @variable
       @response = Response.new
       @respondent.response = @response
+      @experiment_response = ExperimentResponse.new
+      @respondent.experiment_response = @experiment_response
       
       @respondent.save
       @variable.save
       @response.save
+      @experiment_response.save
       
       session[:ID] = @respondent.id
       session[:count] = 1
@@ -212,12 +215,11 @@ class SurveyController < ApplicationController
     
     # Checks to see if the the rows should be the same as the last scenario shown
     if session[:rows_to_keep] == nil
-      @rows = @question.rows(@experiment, designs_used)
+      @rows, @value_table = @question.rows(@experiment, designs_used)
       index = 0
       
       @rows.each do
         |row|
-        
         # Add attribute labels to the left column of the table
         if attributes != nil
           if attributes[index] == nil
@@ -233,8 +235,10 @@ class SurveyController < ApplicationController
       
       session[:rows_to_keep] = @rows
       session[:design] = @question.design.join(" ")
+      session[:value_table] = @value_table
     else
       @rows = session[:rows_to_keep]
+      @values = session[:value_table]
     end
     
     if @count == 0 && @count_actual == 0
@@ -306,23 +310,26 @@ class SurveyController < ApplicationController
           
           #Adds the experiment table's columns to the ExperimentResponses table
           columns = []
-          (0..session[:rows_to_keep][0].length-1).each do
+          (1..session[:rows_to_keep][0].length-1).each do
             |col|
-            column = ''
-            session[:rows_to_keep].each_value do
+            column = ""
+            session[:rows_to_keep].each_index do
               |row|
-              column << session[:rows_to_keep][col][row].to_s + "\t"
+              column << session[:rows_to_keep][row][col].to_s + '|'  #The current default delimiter is the pipe character
             end
-            columns << column.chop  #Eliminates the trailing tab
+            columns << column.chop  #Eliminates the trailing delimiter
           end
           
-          experiment = Experiment.find_by_name(scenario.choice_experiment_name.to_s).choice_exp_object
-          alternatives = experiment.alternatives
-          
-          alternatives.each_value do
-            |i|
-            
+          experiment = Experiment.find_by_name(@question.choice_experiment_name.to_s).choice_exp_object
+          column_names = @question.get_column_names_by_alt(experiment.alternatives)
+          column_names.each_index do
+            |index|
+            column_name = column_names[index]
+            ExperimentResponse.update(session[:ID], { column_name => columns[index]})
           end
+          
+          #Adds the experiment table's values to the ExperimentValues table
+          
           
         elsif @question.database?
           if @question.value.is_a?(Symbol)
@@ -362,6 +369,7 @@ class SurveyController < ApplicationController
     end
     
     session[:rows_to_keep] = nil
+    session[:value_table] = nil
     
     if Page.find_by_sequence_id(session[:count]) == nil
       #Update the variable hash

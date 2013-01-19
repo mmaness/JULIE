@@ -18,4 +18,5 @@
 class Respondent < ActiveRecord::Base
   has_one :response
   has_one :variable
+  has_one :experiment_response
 end
