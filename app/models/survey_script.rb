@@ -36,8 +36,12 @@ def parse_and_compile(survey_filepath)
   
   puts "\n\nSurvey successfully compiled and bytecode stored in the database."
   
-  puts "\nWill now add columns to Responses table for each question..."
+  puts "\nWill now add columns to RESPONSES table for each question..."
   MeiMei::CreateResponsesTable.create
+  puts "Columns successfully added."
+  
+  puts "\nWill now add columns to EXPERIMENT_RESPONSES table for each question..."
+  MeiMei::CreateExperimentResponsesTable.create
   puts "Columns successfully added."
   
   puts "\n\nSurvenityRuby done executing."
@@ -56,13 +60,48 @@ module MeiMei
           # Adds a column to the responses table if this question requires responses from the respondent
           if question.question_object.responses?
             add_column(:responses, question.question_name.to_s, :string)
-            puts "  *Added column #{question.question_name} (or the column already exists)"
+            puts "  *Added column #{question.question_name} to RESPONSES table. (or the column already exists)"
           else
             puts "  *Did not add column #{question.question_name}, this question does not allow for responses from the respondent"
           end
           
         rescue Exception => e
-          puts "  An error was caught: #{e}"
+          puts "  [WARN] An error was caught: #{e}"
+        end
+      end
+    end
+    
+    def self.down
+      raise 'Cannot execute down method for this migration, unsafe to delete response data that has been stored.'
+    end
+  end
+  
+  class CreateExperimentResponsesTable < ActiveRecord::Migration
+    def self.create
+      load File.dirname(__FILE__) + "/questions/question.rb"
+      
+      experiment_alternatives = {}  #A hash which holds the alternative names (values) for each choice experiment (exp names are the keys)
+      Experiment.all.each do
+        |experiment|
+        experiment_alternatives[experiment.name.to_s] = experiment.choice_exp_object.alternatives
+      end
+      
+      Question.all.each do
+        |question|
+        begin
+          if question.question_object.scenario?
+            # Cycles through all the alternative names in the experiment associated with this scenario and
+            # adds columns to the ExperimentResponses table
+            experiment_alternatives[question.question_object.choice_experiment_name.to_s].each do
+              |alt_name|
+              #Creates a column name which corresponds to the scenario name underscore alternative name
+              column_name = "#{question.question_name.to_s}_#{alt_name.strip.gsub(/\s+/,'_').camelize}"  #converts the alt name to camelcase 
+              add_column(:experiment_responses, column_name, :string)
+              puts "  *Added column #{column_name} to the EXPERIMENT_RESPONSES table.  (or the column already exists)"
+            end
+          end
+        rescue Exception => e
+          puts "  [WARN] An error was caught: #{e}"
         end
       end
     end
