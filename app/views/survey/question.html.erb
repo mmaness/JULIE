@@ -106,7 +106,6 @@
 			<% if @questionObject.skip? == true %>
 			If you feel uncomfortable answering this question, Press <b>SKIP</b>... <%= button_to "  < SKIP >  ", :action => "check", :skip => true, :submit_count => @count_actual%>
 			<% end %>
-			<%= @sequence.to_s%>
 			</div>
 			</div>
 			
