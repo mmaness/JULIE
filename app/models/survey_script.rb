@@ -37,11 +37,11 @@ def parse_and_compile(survey_filepath)
   puts "\n\nSurvey successfully compiled and bytecode stored in the database."
   
   puts "\nWill now add columns to RESPONSES table for each question..."
-  MeiMei::CreateResponsesTable.create
+  MeiMei::CreateResponsesAndValuesTables.create
   puts "Columns successfully added."
   
   puts "\nWill now add columns to EXPERIMENT_RESPONSES table for each question..."
-  MeiMei::CreateExperimentResponsesTable.create
+  MeiMei::CreateExperimentResponsesAndValuesTables.create
   puts "Columns successfully added."
   
   puts "\n\nSurvenityRuby done executing."
@@ -51,22 +51,21 @@ end
 
 module MeiMei
   
-  class CreateResponsesTable < ActiveRecord::Migration
+  class CreateResponsesAndValuesTables < ActiveRecord::Migration
     def self.create
       load File.dirname(__FILE__) + "/questions/question.rb"
       Question.all.each do
         |question|
-        begin
-          # Adds a column to the responses table if this question requires responses from the respondent
-          if question.question_object.responses?
+        # Adds a column to the responses table if this question requires responses from the respondent
+        if question.question_object.responses?
+          begin
             add_column(:responses, question.question_name.to_s, :string)
             puts "  *Added column #{question.question_name} to RESPONSES table. (or the column already exists)"
-          else
-            puts "  *Did not add column #{question.question_name}, this question does not allow for responses from the respondent"
+          rescue Exception => e
+            puts "  [WARN] An error was caught: #{e}"
           end
-          
-        rescue Exception => e
-          puts "  [WARN] An error was caught: #{e}"
+        else
+          puts "  *Did not add column #{question.question_name}, this question does not allow for responses from the respondent"
         end
       end
     end
@@ -76,7 +75,7 @@ module MeiMei
     end
   end
   
-  class CreateExperimentResponsesTable < ActiveRecord::Migration
+  class CreateExperimentResponsesAndValuesTables < ActiveRecord::Migration
     def self.create
       load File.dirname(__FILE__) + "/questions/question.rb"
       
@@ -88,19 +87,26 @@ module MeiMei
       
       Question.all.each do
         |question|
-        begin
-          if question.question_object.scenario?
-            # Cycles through all the alternative names in the experiment associated with this scenario and
-            # adds columns to the ExperimentResponses table
-            question.question_object.get_column_names_by_alt(experiment_alternatives[question.question_object.choice_experiment_name.to_s]).each do
-              |column_name|
-              #Creates a column name which corresponds to the scenario name underscore alternative name
+        if question.question_object.scenario?
+          # Cycles through all the alternative names in the experiment associated with this scenario and
+          # adds columns to the ExperimentResponses table
+          question.question_object.get_column_names_by_alt(experiment_alternatives[question.question_object.choice_experiment_name.to_s]).each do
+            |column_name|
+            #Creates a column name in both the responses and values tables
+            begin
               add_column(:experiment_responses, column_name, :string)
-              puts "  *Added column #{column_name} to the EXPERIMENT_RESPONSES table.  (or the column already exists)"
+              puts "  *Added column #{column_name} to the EXPERIMENT_RESPONSES tables.  (or the column already exists)"
+            rescue Exception => e
+              puts "  [WARN] An error was caught: #{e}"
+            end
+            
+            begin
+              add_column(:experiment_values, column_name, :string)
+              puts "  *Added column #{column_name} to the EXPERIMENT_VALUES tables.  (or the column already exists)"
+            rescue Exception => e
+              puts "  [WARN] An error was caught: #{e}"
             end
           end
-        rescue Exception => e
-          puts "  [WARN] An error was caught: #{e}"
         end
       end
     end
