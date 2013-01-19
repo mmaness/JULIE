@@ -92,10 +92,9 @@ module MeiMei
           if question.question_object.scenario?
             # Cycles through all the alternative names in the experiment associated with this scenario and
             # adds columns to the ExperimentResponses table
-            experiment_alternatives[question.question_object.choice_experiment_name.to_s].each do
-              |alt_name|
+            question.question_object.get_column_names_by_alt(experiment_alternatives[question.question_object.choice_experiment_name.to_s]).each do
+              |column_name|
               #Creates a column name which corresponds to the scenario name underscore alternative name
-              column_name = "#{question.question_name.to_s}_#{alt_name.strip.gsub(/\s+/,'_').camelize}"  #converts the alt name to camelcase 
               add_column(:experiment_responses, column_name, :string)
               puts "  *Added column #{column_name} to the EXPERIMENT_RESPONSES table.  (or the column already exists)"
             end

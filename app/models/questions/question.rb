@@ -663,6 +663,16 @@ module RubyJulie
       return table
     end
     
+    # Cycles through all the alternative names given and creates columns names in question_name underscore alt_name format
+    def get_column_names_by_alt(alternative_names)
+      column_names = []
+      alternative_names.each do
+        |alt_name|
+        column_names << "#{name.to_s}_#{alt_name.strip.gsub(/\s+/,'_').camelize}"  #converts the alt name to camelcase 
+      end
+      return column_names
+    end
+    
   end
   
   

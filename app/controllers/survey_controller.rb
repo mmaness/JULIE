@@ -303,6 +303,27 @@ class SurveyController < ApplicationController
           else
             response = session[:design] + " -- " + params[:answer]
           end
+          
+          #Adds the experiment table's columns to the ExperimentResponses table
+          columns = []
+          (0..session[:rows_to_keep][0].length-1).each do
+            |col|
+            column = ''
+            session[:rows_to_keep].each_value do
+              |row|
+              column << session[:rows_to_keep][col][row].to_s + "\t"
+            end
+            columns << column.chop  #Eliminates the trailing tab
+          end
+          
+          experiment = Experiment.find_by_name(scenario.choice_experiment_name.to_s).choice_exp_object
+          alternatives = experiment.alternatives
+          
+          alternatives.each_value do
+            |i|
+            
+          end
+          
         elsif @question.database?
           if @question.value.is_a?(Symbol)
             response = session[@question.value]
