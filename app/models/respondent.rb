@@ -1,5 +1,5 @@
 # JULIE - an open-source survey design and administration framework
-# Copyright (C) 2007-2011  Michael Maness
+# Copyright (C) 2007-2013  Michael Maness
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
