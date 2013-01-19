@@ -142,6 +142,12 @@ module RubyJulie
       return false
     end
     
+    # Used to verify whether this question can have responses, this is useful for task such as
+    # determining if a column in the responses table should be named after this question
+    def responses?
+      return true
+    end
+    
   end
   
   class StaticChoice < Question
@@ -494,6 +500,10 @@ module RubyJulie
       return false
     end
     
+    def responses?
+      return false
+    end
+    
   end
   
   class DatabaseQuestion < Question
@@ -586,6 +596,10 @@ module RubyJulie
       return true
     end
     
+    def responses?
+      return false
+    end
+    
   end
   
   # A question which represents a block of code
@@ -597,6 +611,10 @@ module RubyJulie
     
     def isValid(answer, variable_hash)
       return true
+    end
+    
+    def responses?
+      return false
     end
     
   end
@@ -659,6 +677,10 @@ module RubyJulie
     end
     
     def dummy?
+      return false
+    end
+    
+    def responses?
       return false
     end
     

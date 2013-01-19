@@ -57,6 +57,10 @@ class Calculation < RubyJulie::Question
     return true
   end
   
+  def responses?
+    return false
+  end
+  
 end
 
 class Command
