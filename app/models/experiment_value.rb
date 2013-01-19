@@ -15,9 +15,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-class Respondent < ActiveRecord::Base
-  has_one :response
-  has_one :variable
-  has_one :experiment_response
-  has_one :experiment_value
+class ExperimentValue < ActiveRecord::Base
+  belongs_to :respondent
 end

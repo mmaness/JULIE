@@ -1,8 +1,8 @@
 class CreateVariables < ActiveRecord::Migration
   def self.up
     create_table :variables do |t|
-       t.timestamps
        t.integer :respondent_id, :null => false
+       t.timestamps
        t.string :variable_hash, :null => false
     end
   end
