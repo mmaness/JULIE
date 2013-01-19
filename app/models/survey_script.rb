@@ -53,6 +53,7 @@ module MeiMei
       Question.all.each do
         |question|
         begin
+          # NEED TO CHANGE QUESTION CLASS TO HAVE A no_responses? or responses? METHOD. THIS CODE IS HARD TO MAINTAIN
           no_responses = question.question_object.dummy? || question.question_object.calculation? || question.question_object.link? || question.question_object.survey_settings?
           add_column(:responses, question.question_name.to_s, :string) unless no_responses
           puts "  Added column #{question.question_name} (or the column already exists)" unless no_responses

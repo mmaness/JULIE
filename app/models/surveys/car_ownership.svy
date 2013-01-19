@@ -294,6 +294,12 @@ Integer VehiclePrice
   t "Approximately how much did you pay for this vehicle?"
   add_default_answer -98
   bounds 0
+  
+MultipleChoice VehicleSize
+  t "Which of the following best describes the size of your vehicle?"
+  choice "Small or Compact"
+  choice "Mid-Size"
+  choice "Large"
 
 Integer VehicleMPG
   t "What is your primary vehicle's fuel efficiency (MPG)?"
