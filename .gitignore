@@ -1,5 +1,2 @@
-# This file tells git to ignore select files
-
-# Exclude log files and databases#
 *.log
 *.sqlite3
