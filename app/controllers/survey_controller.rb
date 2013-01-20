@@ -44,6 +44,10 @@ class SurveyController < ApplicationController
       @experiment_value.save
       
       session[:ID] = @respondent.id
+      session[:response_ID] = @response.id
+      session[:variable_ID] = @variable.id
+      session[:experiment_response_ID] = @experiment_response.id
+      session[:experiment_value_ID] = @experiment_value.id
       session[:count] = 1
       session[:ques_count] = 1   #Keeps track of the number of questions the user has seen
       session[:section] = ""     #Keeps track of the section to show to the user
@@ -236,6 +240,16 @@ class SurveyController < ApplicationController
         row.map! {|cell| replaceSymbolsInString(replaceVariablesInString(cell, @survey), @variable_hash)}
       end
       
+      #Set variables in the value_table to their current value
+      @value_table.each_index do
+        |row_index|
+        @value_table[row_index].each_index do
+          |col_index|
+          value = @value_table[row_index][col_index]
+          @value_table[row_index][col_index] = @variable_hash[value] if @variable_hash[value]
+        end
+      end
+      
       session[:rows_to_keep] = @rows
       session[:design] = @question.design.join(" ")
       session[:value_table] = @value_table
@@ -313,14 +327,18 @@ class SurveyController < ApplicationController
           
           #Adds the experiment table's columns to the ExperimentResponses table
           columns = []
+          values_columns = []
           (1..session[:rows_to_keep][0].length-1).each do
             |col|
             column = ""
+            values_column = ""
             session[:rows_to_keep].each_index do
               |row|
               column << session[:rows_to_keep][row][col].to_s + '|'  #The current default delimiter is the pipe character
+              values_column << session[:value_table][row][col-1].to_s + ';'
             end
             columns << column.chop  #Eliminates the trailing delimiter
+            values_columns << values_column.chop  #Eliminates the trailing delimiter
           end
           
           experiment = Experiment.find_by_name(@question.choice_experiment_name.to_s).choice_exp_object
@@ -328,7 +346,8 @@ class SurveyController < ApplicationController
           column_names.each_index do
             |index|
             column_name = column_names[index]
-            ExperimentResponse.update(session[:ID], { column_name => columns[index]})
+            ExperimentResponse.update(session[:experiment_response_ID], { column_name => columns[index]})
+            ExperimentValue.update(session[:experiment_value_ID], { column_name => values_columns[index]})
           end
           
           #Adds the experiment table's values to the ExperimentValues table
@@ -345,7 +364,7 @@ class SurveyController < ApplicationController
           response = '*SKIP*' if params[:skip]  #Checks if the question is skipped, then allocates the correct "skip" response
         end
         
-        Response.update(session[:ID], { @question.name => response})
+        Response.update(session[:response_ID], { @question.name => response})
         
         
         @variable_hash[@question.name.to_sym] = response

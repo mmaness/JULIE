@@ -30,7 +30,7 @@
 				<% end %>
 				<h2>Question <%= @count %>.</h2>
 							
-				<% form_tag :action => "check" do %>
+				<%= form_tag :action => "check" do %>
 					
 					<% if flash[:notice] != nil %>
 						<div style="color: red" class="notice">Sorry, your answer was not valid:<br>
