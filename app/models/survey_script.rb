@@ -31,20 +31,21 @@ def parse_and_compile(survey_filepath)
   survey = parse_survey_file(path)
   
   puts "\nSurvey successfully parsed.  Progressing to compilation using Kaywinnit...", "", ""
-  
-  Kaywinnit::compile_survey(survey)
-  
-  puts "\n\nSurvey successfully compiled and bytecode stored in the database."
-  
-  puts "\nWill now add columns to RESPONSES table for each question..."
-  MeiMei::CreateResponsesAndValuesTables.create
-  puts "Columns successfully added."
-  
-  puts "\nWill now add columns to EXPERIMENT_RESPONSES table for each question..."
-  MeiMei::CreateExperimentResponsesAndValuesTables.create
-  puts "Columns successfully added."
-  
-  puts "\n\nSurvenityRuby done executing."
+  ActiveRecord::Base.logger.silence do  #Suppresses SQL output
+    Kaywinnit::compile_survey(survey)
+    
+    puts "\n\nSurvey successfully compiled and bytecode stored in the database."
+    
+    puts "\nWill now add columns to RESPONSES table for each question..."
+    MeiMei::CreateResponsesAndValuesTables.create
+    puts "Columns successfully added."
+    
+    puts "\nWill now add columns to EXPERIMENT_RESPONSES table for each question..."
+    MeiMei::CreateExperimentResponsesAndValuesTables.create
+    puts "Columns successfully added."
+    
+    puts "\n\nSurvenityRuby done executing."
+  end
   
 end
 
