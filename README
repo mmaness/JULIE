@@ -1,4 +1,4 @@
-== Welcome to JULIE, version 1.8.2
+== Welcome to JULIE, version 1.8.3
 Copyright (C) 2007-2013  Michael Maness
 
 
@@ -10,39 +10,31 @@ and Ruby programming language.
 
 
 == Release Notes
-   Version 1.8.2
+   Version 1.8.3
 
-This is a small update.
+This is a minor update.
 
-The following changes were made (including 1.8.1 release notes):
+The following changes were made:
 
-* Added a new sample survey, math_exam.svy.  It is a short Algebra exam with branching 
-  depending on right and wrong answers
-* Added a new sample survey, vacation_choice_extended.svy
-* Citrus parser no longer ends all ruby execution if an error is thrown. It will 
-  throw an exception instead.
-* Survenity grammar changed so that the traits "branch" and "default_branch" can have 
-  whitespace after the question name.
-* Modified all question objects such that their isValid() method requires an answer and the
-  variable hash.
+* Officially supports Ruby 1.9.3.
+* ExperimentResponse table added to the model and database. This table stores the state
+  of a Scenario question's scenario table for each respondent's responses.
+* ExperimentValue table added to the model and database. This table stores the state of
+  a Scenario question's scenario table in "value form" for each respondent's responses.
+* The gem file has references for Mongrel and Thin.
+* Changed the copyright date on most files from 2011 to 2013.
+* The .gitignore file should now work on .sqlite3 and .log files.
 
 The following bugs were found and fixed:
 
-* Number-Input Questions should compile now if they have no bounds.
-  (Bugfix: Kaywinnit Compiler)
-* Assigning single-quoted strings should now work. (Bugfix: Tam Expression Interpreter)
-* For Number-Input Questions where an error would be thrown when answering a
-  Number-Input Question with no bounds. (Bugfix: Number-Input Questions)
-* "Before calculations" for a question that is rendered after a Multiple Branch or 
-  Single Branch should now perform correctly. (Bugfix: JULIE Controller)
-* For Number-Input Questions, bounds should now not throw errors when performing validation
-  tests, isValid() method. (Bugfix: Number-Input Questions)
-* For Decimal-Input and Currency Questions, all bounds are now converted to floats correctly. 
-  (Bugfix: Decimal-Input Questions)
-* The variable hash should now store integer and decimal values from Number-Input Questions
-  correctly as Ruby FixNum and Float objects respectively. (Bugfix: Variable Model/Table)
-* Performed additional bugfixes on bounds for Number-Input Questions. 
-  (Bugfix: Kaywinnit Compiler)
+* A notification of invalid input should be given to respondents for Scenario questions.
+  (Bugfix: Survey Controller)
+* Fixed the issue where refreshing or entering invalid answers for Scenario questions gave
+  the respondent a newly created scenario table. Now the same scenario table should be shown.
+  (Bugfix: Survey Controller)
+* Fixed a bug where skip was not showing and the back button was not working as intended on
+  the first question. Back button was showing even though it was the first question and
+  question numbering is incorrect. (Bugfix: Survey Controller)
  
 == Getting Started
 
@@ -52,17 +44,17 @@ The following bugs were found and fixed:
 To get started with JULIE, you need the following:
 
 * Operating System supported by Ruby (Windows, Mac OS/X, Linux)
-* Ruby 1.8.7
+* Ruby 1.9.3
 * Rails 3.0.9 or higher
 * SQLite 3.5.6
 * Bundler 1.0.21
 
 After installing those components successfully, download the JULIE package from Github 
 (https://github.com/mmaness/JULIE/zipball/master OR https://github.com/mmaness/JULIE/tarball/master) 
-and unzip/untar it a directory.  It is suggested that you rename the parent directory to "JULIE-180" 
+and unzip/untar it a directory.  It is suggested that you rename the parent directory to "JULIE-183" 
 for consistency with the rest of the instructions.
 
-Using a command line tool, go to the JULIE-180 directory.  To install the dependencies, use the 
+Using a command line tool, go to the JULIE-183 directory.  To install the dependencies, use the 
 following command:
   bundle install
 
@@ -77,7 +69,7 @@ with this line:
 Then save the file. If successful, then rerunning the command "rails -v" should show no error messages.
 
 With the dependencies installed, create the development and production databases.  First change 
-directories to /JULIE-180/db/ then create copies of the blank database template:
+directories to /JULIE-183/db/ then create copies of the blank database template:
   cp blank_database_template.db development.sqlite3
   cp blank_database_template.db production.sqlite3
   
