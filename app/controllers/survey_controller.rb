@@ -54,6 +54,14 @@ class SurveyController < ApplicationController
       session[:sequence] = []
       session[:survey_name] = ""
       session[:survey_description] = ""
+      
+      # Initializes all variables referring to questions to nil
+      Question.all.each do
+        |question|
+        @variable.variable_hash[question.question_name.to_sym] = '' if question.question_object.responses?
+      end
+      @variable.save
+      
     end
 
   end
