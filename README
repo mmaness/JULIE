@@ -16,7 +16,7 @@ This is a minor update.
 
 The following changes were made:
 
-* Officially supports Ruby 1.9.3.
+* Officially supports Ruby 1.9.3 and Rails 3.2.11.
 * ExperimentResponse table added to the model and database. This table stores the state
   of a Scenario question's scenario table for each respondent's responses.
 * ExperimentValue table added to the model and database. This table stores the state of
@@ -45,7 +45,7 @@ To get started with JULIE, you need the following:
 
 * Operating System supported by Ruby (Windows, Mac OS/X, Linux)
 * Ruby 1.9.3
-* Rails 3.0.9 or higher
+* Rails 3.2.11 or higher
 * SQLite 3.5.6
 * Bundler 1.0.21
 
