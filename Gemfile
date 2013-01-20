@@ -11,7 +11,8 @@ gem 'rake', '0.8.7'
 gem 'citrus'
 gem 'treetop'
 
-#gem 'mongrel', '>= 1.2.0.pre2'
+gem 'mongrel', '>= 1.2.0.pre2'
+gem 'thin'
 
 
 # Use unicorn as the web server
