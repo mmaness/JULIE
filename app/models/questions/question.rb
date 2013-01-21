@@ -678,6 +678,10 @@ module RubyJulie
       return column_names
     end
     
+    def get_choice_column_name
+      return "#{name.to_s}_CHOICE"
+    end
+    
   end
   
   

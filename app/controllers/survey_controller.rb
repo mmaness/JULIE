@@ -21,6 +21,8 @@ class SurveyController < ApplicationController
   #load 'questions/choice_experiment.rb'
   
   def instructions
+    load 'questions/question.rb'
+    
     @name = "Survey Instructions"
     @description = ""
     
@@ -350,6 +352,8 @@ class SurveyController < ApplicationController
           end
           
           experiment = Experiment.find_by_name(@question.choice_experiment_name.to_s).choice_exp_object
+          ExperimentResponse.update(session[:experiment_response_ID], { @question.get_choice_column_name => params[:answer]})
+          ExperimentValue.update(session[:experiment_value_ID], { @question.get_choice_column_name => params[:answer]})
           column_names = @question.get_column_names_by_alt(experiment.alternatives)
           column_names.each_index do
             |index|

@@ -89,6 +89,21 @@ module MeiMei
       Question.all.each do
         |question|
         if question.question_object.scenario?
+          choice_column_name = question.question_object.get_choice_column_name
+          begin
+            add_column(:experiment_responses, choice_column_name, :string)
+            puts "  *Added column #{choice_column_name} to the EXPERIMENT_RESPONSES tables."
+          rescue Exception => e
+            puts "  [WARN] An error was caught: #{e}"
+          end
+          
+          begin
+            add_column(:experiment_values, choice_column_name, :string)
+            puts "  *Added column #{choice_column_name} to the EXPERIMENT_VALUES tables."
+          rescue Exception => e
+            puts "  [WARN] An error was caught: #{e}"
+          end
+          
           # Cycles through all the alternative names in the experiment associated with this scenario and
           # adds columns to the ExperimentResponses table
           question.question_object.get_column_names_by_alt(experiment_alternatives[question.question_object.choice_experiment_name.to_s]).each do
@@ -96,14 +111,14 @@ module MeiMei
             #Creates a column name in both the responses and values tables
             begin
               add_column(:experiment_responses, column_name, :string)
-              puts "  *Added column #{column_name} to the EXPERIMENT_RESPONSES tables.  (or the column already exists)"
+              puts "  *Added column #{column_name} to the EXPERIMENT_RESPONSES tables."
             rescue Exception => e
               puts "  [WARN] An error was caught: #{e}"
             end
             
             begin
               add_column(:experiment_values, column_name, :string)
-              puts "  *Added column #{column_name} to the EXPERIMENT_VALUES tables.  (or the column already exists)"
+              puts "  *Added column #{column_name} to the EXPERIMENT_VALUES tables."
             rescue Exception => e
               puts "  [WARN] An error was caught: #{e}"
             end

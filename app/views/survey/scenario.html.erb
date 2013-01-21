@@ -62,9 +62,9 @@
 					<br/>
 					
 					<h2>
-					<% for index in 0..(@choices.size-1) %>
+					<% for index in (1..@choices.size) %>
 						<%= radio_button_tag 'answer', index %>
-						<%= @choices[index].html_safe%> <br/>
+						<%= @choices[index-1].html_safe %> <br/>
 					<% end %>
 					</h2>
 					

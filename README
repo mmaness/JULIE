@@ -10,17 +10,21 @@ and Ruby programming language.
 
 
 == Release Notes
-   Version 1.8.3
+   Version 1.8.3.1
 
-This is a minor update.
+This is a very small modification.
 
-The following changes were made:
+The following changes were made (including 1.8.1 notes):
 
 * Officially supports Ruby 1.9.3 and Rails 3.2.11.
 * ExperimentResponse table added to the model and database. This table stores the state
   of a Scenario question's scenario table for each respondent's responses.
 * ExperimentValue table added to the model and database. This table stores the state of
   a Scenario question's scenario table in "value form" for each respondent's responses.
+* Added the a column to the ExperimentValue and ExperimentResponse tables for each Scenario
+  question which stores the response given. [1.8.3.1]
+* Changed the indexing for responses to Scenario questions from zero-based to one-based
+  (i.e. the first response is mapped to one instead of zero) [1.8.3.1]
 * The gem file has references for Mongrel and Thin.
 * Changed the copyright date on most files from 2011 to 2013.
 * The .gitignore file should now work on .sqlite3 and .log files.
@@ -35,6 +39,8 @@ The following bugs were found and fixed:
 * Fixed a bug where skip was not showing and the back button was not working as intended on
   the first question. Back button was showing even though it was the first question and
   question numbering is incorrect. (Bugfix: Survey Controller)
+* Fixed a bug where questions/question.rb was not loaded in the instructions method.
+  (Bugfix: Survey Controller) [1.8.3.1]
  
 == Getting Started
 
