@@ -9,7 +9,7 @@ gem 'sqlite3'
 gem 'rake'
 #gem 'rake', '0.8.7'
 
-gem 'citrus'
+gem 'citrus', '2.4.1'
 gem 'treetop'
 
 gem 'mongrel', '>= 1.2.0.pre2'
